@@ -1,6 +1,7 @@
 <template>
   <div class="background">
-    <vue-particles
+    <div class="login-register">
+		<vue-particles
     color="#dedede"
     :particleOpacity="0.7"
     :particlesNumber="180"
@@ -18,7 +19,6 @@
      clickMode="push"
    >
 </vue-particles>
-    <div class="login-register">
 	<div class="contain">
 		<div class="big-box" :class="{active:isLogin}"> 
 				<div class="big-contain" v-if="!isLogin">
@@ -237,13 +237,13 @@ import axios from 'axios'
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-    position:relative;
+        position:relative;
 	}
 	.btitle{
 		font-size: 1.5em;
 		font-weight: bold;
 		color: rgb(95, 202, 216);
-    position:relative;
+        position:relative;
 	}
 	.bform{
 		width: 100%;
@@ -253,7 +253,7 @@ import axios from 'axios'
 		flex-direction: column;
 		justify-content: space-around;
 		align-items: center;
-    position:relative;
+        position:relative;
 	}
 	.bselect{
 		position:relative;
@@ -267,7 +267,7 @@ import axios from 'axios'
 		color: red;
 		font-size: 0.7em;
 		margin-left: 1em;
-    position:relative;
+        position:relative;
 	}
 	.bform input{
 		width: 50%;
@@ -277,7 +277,7 @@ import axios from 'axios'
 		border-radius: 10px;
 		padding-left: 2em;
 		background-color: #f0f0f0;
-    position:relative;
+        position:relative;
 	}
 	.bbutton{
 		width: 20%;
@@ -289,7 +289,7 @@ import axios from 'axios'
 		color: #fff;
 		font-size: 0.9em;
 		cursor: pointer;
-    position:relative;
+        position:relative;
 	}
 	.small-box{
 		width: 30%;
@@ -316,7 +316,7 @@ import axios from 'axios'
 		font-size: 2em;
 		font-weight: bold;
 		color: #fff;
-    position:relative;
+        position:relative;
 	}
 	.scontent{
 		font-size: 0.8em;
@@ -335,13 +335,13 @@ import axios from 'axios'
 		color: #fff;
 		font-size: 0.9em;
 		cursor: pointer;
-    position:relative;
+        position:relative;
 	}
 	
 	.big-box.active{
 		left: 0;
 		transition: all 0.5s;
-    position: absolute;
+        position: absolute;
 	}
 	.small-box.active{
 		left: 100%;
