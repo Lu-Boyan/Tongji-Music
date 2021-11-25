@@ -1,0 +1,81 @@
+/* 全局样式表 */
+html,
+body,
+#app{
+    height:100%;
+    margin:0;
+    padding:0;
+}
+
+.el-breadcrumb{
+    
+    font-size: 12px;
+}
+
+.el-card{
+    margin-top: 15px; 
+    box-shadow: 0 0px 5px rgba(71, 71, 71, 0.15) !important;
+}
+
+.el-table{
+    width: 100%;
+    /* margin-top: 15px; */
+    font-size: 12px;
+}
+
+.el-pagination{
+    margin-top: 15px;
+}
+
+.el-input{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: 40px;
+}
+
+.el-autocomplete{
+    margin-right: 35px;
+}
+
+.el-button{
+    margin-left: 15px;
+}
+
+.el-container{
+    box-shadow: 0 0px 10px rgba(68, 68, 68, 0.15)
+}
+
+
+/* 从下向上滑动 */
+ .fade-leave-to{
+    opacity:0;
+    transform: translate3d(0,-300px,0);
+     position: absolute; 
+     z-index: -10;
+}
+  .fade-enter{
+      transform: translate3d(0,300px,0);
+      position: absolute;
+}
+  .fade-leave-active,.fade-enter-active{
+    transition: .5s all ease;
+}
+
+
+/* 从上向下滑动 */
+.down-leave-to{
+    opacity:0;
+    transform: translate3d(0,-300px,0);
+     position: absolute; 
+     z-index: -10;
+}
+  .down-enter{
+      transform: translate3d(0,300px,0);
+      position: absolute;
+}
+  .down-leave-active,.down-enter-active{
+    transition: .5s all ease;
+}
+
+
