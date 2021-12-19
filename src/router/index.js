@@ -8,6 +8,7 @@ import mainPage from '../views/mainPage.vue'
 import playlist from '../views/playlist.vue'
 import search from '../views/search.vue'
 import recommend from '../views/recommend.vue'
+import comment from '../views/comment.vue'
 import main from '../views/main.vue'
 import community from '../views/community.vue'
 Vue.use(Router)
@@ -15,8 +16,7 @@ Vue.use(Router)
 
 export default new Router({
     mode: 'history',
-    routes: [
-        {
+    routes: [{
             path: '/',
             redirect: '/login'
         },
@@ -29,37 +29,44 @@ export default new Router({
             path: '/tjmusic',
             component: main,
             redirect: '/tjmusic/mainPage',
-            children:[
-                {
+            children: [{
                     path: '/tjmusic/mainPage',
                     //component: () => import('../views/mainPage.vue'),
                     redirect: '/tjmusic/mainPage/playlist',
                     component: mainPage,
-                    children: [
-                      {
-                        path: '/tjmusic/mainPage/playlist', // 正在播放列表
-                        //component: () => import('../views/playlist.vue'),
-                        component: playlist,
-                        meta: {
-                          keepAlive: true
+                    children: [{
+                            path: '/tjmusic/mainPage/playlist', // 正在播放列表
+                            //component: () => import('../views/playlist.vue'),
+                            component: playlist,
+                            meta: {
+                                keepAlive: true
+                            }
+                        },
+                        {
+                            path: '/tjmusic/mainPage/search', // 搜索列表
+                            //component: () => import('../views/search.vue'),
+                            component: search,
+                            meta: {
+                                keepAlive: true
+                            }
+                        },
+                        {
+                            path: '/tjmusic/mainPage/recommend', // 搜索列表
+                            //component: () => import('../views/recommend.vue'),
+                            component: recommend,
+                            meta: {
+                                keepAlive: true
+                            }
+                        },
+                        {
+                            path: '/tjmusic/mainPage/comment', // 搜索列表
+                            //component: () => import('../views/recommend.vue'),
+                            component: comment,
+                            meta: {
+                                keepAlive: true
+                            }
                         }
-                      },
-                      {
-                        path: '/tjmusic/mainPage/search', // 搜索列表
-                        //component: () => import('../views/search.vue'),
-                        component: search,
-                        meta: {
-                          keepAlive: true
-                        }
-                      },
-                      {
-                        path: '/tjmusic/mainPage/recommend', // 搜索列表
-                        //component: () => import('../views/recommend.vue'),
-                        component: recommend,
-                        meta: {
-                          keepAlive: true
-                        }
-                      }
+
                     ]
                 },
                 {
@@ -83,10 +90,10 @@ export default new Router({
                     component: fans
                 },
                 {
-                  path: '/tjmusic/community',
-                  //component: () => import('../views/mainPage.vue'),
-                  component: community
-              },
+                    path: '/tjmusic/community',
+                    //component: () => import('../views/mainPage.vue'),
+                    component: community
+                },
             ]
         }
     ]

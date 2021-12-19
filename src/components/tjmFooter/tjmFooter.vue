@@ -32,10 +32,14 @@
           size="medium"
           style="margin-top:10px !important;"
           circle/>
+          
+
           <el-button
           class="el-icon-chat-dot-square"
           size="medium"
-          circle/>
+          circle>
+          <router-link to="search"></router-link>
+          </el-button>
           <el-button
           class="el-icon-microphone"
           size="medium"
