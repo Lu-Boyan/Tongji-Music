@@ -1,4 +1,4 @@
-<template>
+<template xmlns:style="http://www.w3.org/1999/xhtml">
   <div class="background">
     <div class="login-register">
 		<vue-particles
@@ -20,25 +20,25 @@
    >
 </vue-particles>
 	<div class="contain">
-		<div class="big-box" :class="{active:isLogin}"> 
+		<div class="big-box" :class="{active:isLogin}">
 				<div class="big-contain" v-if="!isLogin">
 					<div class="btitle">账户登录</div>
 					<div class="bform">
-						<input type="user_id" placeholder="用户名" v-model="form.user_id" maxlength="7">
-						<span class="errTips" v-if="login_existed">* 用户名不存在 *</span>
+						<input type="user_id" placeholder="账号" v-model="form.user_id" maxlength="7">
+						<span class="errTips" v-if="login_existed">* 账号填写错误 *</span>
 						<input type="password" placeholder="密码" v-model="form.userpwd" maxlength="16">
 						<span class="errTips" v-if="passwordError">* 密码填写错误 *</span>
 					</div>
-					<button class="bbutton" @click="login"><router-link to="/tjmusic">登录</router-link></button>
+					<button class="bbutton" @click="login">登录</button>
 				</div>
 				<div class="big-contain" v-else>
 					<div class="btitle">创建账户</div>
 					<div class="bform">
-						<input type="username" placeholder="用户名" v-model="form.user_id" maxlength="7">
+						<input type="username" placeholder="用户名" v-model="form.username" maxlength="7">
 						<span class="errTips" v-if="register_existed">* 用户名已经存在！ *</span>
 						<input type="email" placeholder="邮箱" v-model="form.useremail">
 						<input type="password" placeholder="密码" v-model="form.userpwd" maxlength="16">
-					</div>		
+					</div>
 					<button class="bbutton" @click="register">注册</button>
 				</div>
 			</div>
@@ -61,132 +61,94 @@
 
 <script>
 import axios from 'axios'
-	export default{
-		name:'login-register',
-		data(){
-			return {
-				isLogin:false,
-				passwordError: false,
-				login_existed: false,
-				register_existed: false,
-				id_notexisted:false,
-				binded:false,
-				form:{
-					user_id:'',
-					username:'',
-					useremail:'',
-					userpwd:'',
-					value:''
-				},
-				options: [
-		{
-		  value: 3,
-          label: '挂号部'
-						},{
-          value: 6,
-          label: '门诊部'
-        }, {
-          value: 32,
-          label: '住院部',
-        }, {
-          value: 8,
-          label: '药品管理部'
-        }, {
-          value: 16,
-          label: '检查管理部'
-        }],
-        value: ''
-			}
-		},
-		methods:{
-			changeType() {
-				this.isLogin = !this.isLogin
-				this.form.user_id = ''
-				this.form.username = ''
-				this.form.useremail = ''
-				this.form.userpwd = ''
-				this.form.value = ''
-			},
-			login() {
-				const self = this;
-				if (self.form.user_id != "" && self.form.userpwd != "") {
-                    axios.get('/logIn', {params:{user_id: self.form.user_id,
-                        password: self.form.userpwd,
-						role:self.form.value}          
-                    })
-					.then(function(res) {
-                        console.log(res.data);
-						switch(res.data.err_code){
-							case "0000": 
-							{
-                                alert("登录成功！");
-								window.sessionStorage.setItem("token",res.data.data.role);
-								self.$router.push({path:'/welcome', query:{id:res.data.data.useR_ID,name:self.form.user_id,dept_name:res.data.data.depT_NAME}});
-								break;
-							}								
-							default:
-							{
-								if(res.data.err_info=="未知错误")
-								{
-									alert("用户名不存在！");
-                                    self.login_existed=true;
-								}
-								else{
-                                    alert("密码错误！");					
-								    self.passwordError = true;
-								}								
-								break;
-							}							
-						}
-					})
-					.catch( err => {
-						console.log(err);
-					})
-				} else{
-					alert("填写不能为空！");
-				}
-			},
-			register(){
-				const self = this;
-				if(self.form.username != "" && self.form.useremail != "" && self.form.userpwd != ""&& self.form.value != ""&&self.form.user_id != ""){
-                    axios.post('/signUp', {PASSWORD:self.form.userpwd,
-					    ID:self.form.username,
-                        user_id:self.form.user_id,
-						email:self.form.useremail,
-						role:self.form.value})
-					.then(function(res){
-						switch(res.data.err_code){
-							case "0000":
-								alert("注册成功！");
-								self.login();
-								break;
-							default:
-								if(res.data.err_info=="ID不存在")
-								{
-									alert("工号不存在，注册失败！");
-                                    self.id_notexisted=true;
-								}
-								else if(res.data.err_info=="用户已经存在")
-								{
-                                    alert("用户名已存在，注册失败！");
-                                    self.register_existed = true;
-								}
-								else{
-									alert("对应工号已绑定其他用户，注册失败！");
-									self.binded=true;
-								}
-								break;
-						}
-					})
-					.catch( err => {
-						console.log(err);
-					})
-				} else {
-					alert("填写不能为空！");
-				}
-			}
-		}
-	}
+export default{
+  name:'login-register',
+  data(){
+    return {
+      isLogin:false,
+      passwordError: false,
+      login_existed: false,
+      register_existed: false,
+      id_notexisted:false,
+      binded:false,
+      form:{
+        user_id:'',
+        username:'',
+        useremail:'',
+        userpwd:'',
+      },
+    }
+  },
+  methods:{
+    changeType() {
+      this.isLogin = !this.isLogin
+      this.form.user_id = ''
+      this.form.username = ''
+      this.form.useremail = ''
+      this.form.userpwd = ''
+    },
+    login() {
+      const self = this;
+      if (self.form.user_id != "" && self.form.userpwd != "") {
+        axios.get('http://localhost:8901/user/login', {
+          params: {
+            userId: self.form.user_id,
+            userPassword: self.form.userpwd
+          }
+        })
+          .then(function (res) {
+            console.log(res);
+            switch (res.data.token) {
+              case "登录成功": {
+                alert("登录成功！");
+                window.sessionStorage.setItem("userToken",res.data);
+                self.$router.push({path:'/tjmusic/mainPage',
+                  query:{userId:res.data.userId,userName:res.data.userName,userEmail:res.data.userEmail,userArea:res.data.userArea,
+                    userAge:res.data.userAge,userContent:res.data.userContent}});
+                break;
+              }
+              case "登录失败": {
+                alert("用户名或密码错误！");
+                self.passwordError = true;
+                self.login_existed = true;
+                break;
+              }
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        alert("填写不能为空！");
+      }
+    },
+    register() {
+      const self = this;
+      if (self.form.username != "" && self.form.useremail != "" && self.form.userpwd != "") {
+        axios.post('http://localhost:8901/user/add_user', {
+          "userId": "",
+          "userPassword": self.form.userpwd,
+          "userEmail": self.form.useremail,
+          "userName": self.form.username,
+        })
+          .then(function (res) {
+            switch (res.data.token) {
+              case "注册成功":
+                alert("注册成功！");
+                self.form.user_id=res.data.userId;
+                self.login();
+                break;
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      } else {
+        alert("填写不能为空！");
+      }
+    }
+  }
+}
 </script>
 
 <style scoped="scoped">
@@ -337,7 +299,7 @@ import axios from 'axios'
 		cursor: pointer;
         position:relative;
 	}
-	
+
 	.big-box.active{
 		left: 0;
 		transition: all 0.5s;
@@ -345,11 +307,8 @@ import axios from 'axios'
 	}
 	.small-box.active{
 		left: 100%;
-		border-top-left-radius: 1;
-		border-bottom-left-radius: 0;
-		border-top-right-radius: inherit;
-		border-bottom-right-radius: inherit;
-		transform: translateX(-100%);
+    border-radius: 1 inherit inherit 0;
+    transform: translateX(-100%);
 		transition: all 1s;
         position: absolute;
 	}

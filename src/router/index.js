@@ -23,12 +23,23 @@ export default new Router({
         {
             path: '/login',
             name: 'login',
-            component: login
+            component: login,
+            meta: {requireAuth: false}
         },
         {
             path: '/tjmusic',
             component: main,
             redirect: '/tjmusic/mainPage',
+            meta: {requireAuth: true },
+            beforeEnter: function(to, from, next) {
+            if (sessionStorage.getItem("userToken")) {
+              next();
+            }
+            else {
+              alert("请先登录");
+              next("/login");
+            }
+          },
             children:[
                 {
                     path: '/tjmusic/mainPage',
