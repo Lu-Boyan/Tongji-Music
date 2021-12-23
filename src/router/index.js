@@ -32,7 +32,7 @@ export default new Router({
             redirect: '/tjmusic/mainPage',
             meta: {requireAuth: true },
             beforeEnter: function(to, from, next) {
-            if (sessionStorage.getItem("userToken")) {
+            if (localStorage.getItem("userToken")) {
               next();
             }
             else {
