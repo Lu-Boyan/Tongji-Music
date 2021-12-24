@@ -29,7 +29,7 @@
 						<input type="password" placeholder="密码" v-model="form.userpwd" maxlength="16">
 						<span class="errTips" v-if="passwordError">* 密码填写错误 *</span>
 					</div>
-					<button class="bbutton" @click="login">登录</button>
+					<button class="bbutton" @click="login"><router-link to="/tjmusic">登录</router-link></button>
 				</div>
 				<div class="big-contain" v-else>
 					<div class="btitle">创建账户</div>
