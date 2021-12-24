@@ -12,6 +12,9 @@
         <el-button class="tjmbutton" type="primary" height:40px plain style="background-color:transparent; border:0px; color:#90F7F7 !important;">
           <router-link to="playlist">正在播放</router-link>
         </el-button>
+      <el-button class="tjmbutton" type="primary" height:40px plain style="background-color:transparent; border:0px; color:#90F7F7 !important;">
+        <router-link to="songslist">歌单信息</router-link>
+      </el-button>
         <el-button class="tjmbutton" type="primary" height:40px plain style="background-color:transparent; border:0px; color:#90F7F7 !important;">
           <router-link to="recommend">推荐</router-link>
         </el-button>
@@ -28,7 +31,7 @@
       <tjmSongWords/>
     </el-main>
     </el-container>
-    <el-footer>
+    <el-footer height="200px">
       <tjmFooter/>
     </el-footer>
   </el-main>
@@ -45,8 +48,8 @@ export default{
     components:{
         tjmMusiclist,
         tjmSongWords,
-        tjmFooter
-    }
+        tjmFooter,
+    },
 }
 </script>
 

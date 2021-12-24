@@ -12,7 +12,7 @@
     <el-button icon="el-icon-upload2" circle style="margin-top:10px !important;" @click.native.prevent="addData()"></el-button>
     </el-row>
   <el-table
-    :data="tableData"
+    :data="commentTableData"
     height="300"
     style="width: 100%; background-color:unset;"
     resizable=“false”>
@@ -27,7 +27,7 @@
     <el-table-column
       fixed="left"
       prop="commentTime"
-      
+
       align= "left"
       resizable=“false”
       style="color:#DDDD22 !important">
@@ -45,7 +45,7 @@
       align= "right"
       resizable=“false”
       style="color:#DDDD22 !important">
-      
+
       <template slot-scope="scope">
         <el-button
           @click.native.prevent="play(scope.$index, tableData)"
@@ -68,9 +68,9 @@
 import axios from 'axios'
   export default {
     data() {
-      
+
       return {
-        tableData: [],
+        commentTableData: [],
         contentData : ''
       }
     },
@@ -80,24 +80,24 @@ import axios from 'axios'
       },
       deleteRow(index, rows) {
         rows.splice(index, 1);
-      }
-      ,getData(){
+      },
+      getData(){
         console.log('@');
         this.$http.get('http://localhost:8902/comment/get_comment_by_songsId/2')
         .then(res => {
-        console.log(res.data)
-        this.tableData.splice(1,this.tableData.length-1)
+        console.log(res.data);
+        this.commentTableData.splice(1,this.commentTableData.length-1)
         for(var i = 0;i<res.data.length;i++)
         {
-          
-          this.tableData.push(res.data[i]);
+
+          this.commentTableData.push(res.data[i]);
           console.log(this);
 
         }
-        
+
     })
-      }
-      ,addData(){
+      },
+      addData(){
         var url = 'http://localhost:8902/comment/add_comment/2/2/';
         url = url + this.contentData;
         console.log(url);
@@ -110,14 +110,14 @@ import axios from 'axios'
 
 
       }
-      
+
     },
-    
+
     mounted:function () {   //自动触发写入的函数
             this.getData();
         }
   }
-  
+
 
 </script>
 <style>
@@ -125,12 +125,12 @@ import axios from 'axios'
         .el-table__expanded-cell {
             background-color: transparent !important;
         }
-        /* 表格内背景颜色 */         
+        /* 表格内背景颜色 */
         .el-table th,
         .el-table tr,
         .el-table td {
             background-color: transparent !important;
-        } 
+        }
 .el-table {
   /* 表格字体颜色 */
   color: #DDDD22;
