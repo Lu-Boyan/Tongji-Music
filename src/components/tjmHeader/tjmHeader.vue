@@ -8,6 +8,9 @@
   <el-menu-item index="2" style="color:#22DDDD !important;" ><router-link to="/tjmusic/mainPage">主页面</router-link></el-menu-item>
   <el-menu-item index="3" style="color:#22DDDD !important;" ><router-link to="/tjmusic/community">云村</router-link></el-menu-item>
   <el-menu-item class="el-icon-s-custom" index="4" style='position: absolute;right:10px;top:5px;color:#22DDDD;'>
+
+
+
     <router-link to="/tjmusic/personal">个人信息</router-link>
   </el-menu-item>
 </el-menu>
