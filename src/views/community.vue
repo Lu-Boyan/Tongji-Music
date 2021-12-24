@@ -15,7 +15,7 @@
             </td>
           </tr>
         </table>
-        
+
       </div>
       
       <hr color="red" style="margin-top:-10px;">
@@ -24,19 +24,23 @@
           <el-timeline-item
             v-for="(activity, index) in activities"
             :key="index"
-            :timestamp="activity.timestamp">
+            :timestamp="activity.momentTime">
               <el-card>
                 <table>
                   <tr>
                       <td><img src="../assets/logo.png"  style="width:40px; height:40px"></td>
-                      <td><h4 style="margin-top:0px; margin-left:0px">{{activity.name}}</h4></td>
+                      <td><h4 style="margin-top:10px; margin-left:10px">{{theactivities[index].userName}}</h4></td>
                   </tr>
-                    <p style="margin-top:10px">{{ activity.content }}</p>
+                  </table>
+                  <table>
+                    <p style="margin-top:10px">{{ activity.momentContent }}</p>
+                    
                 </table>
+                <el-button type="text"  @click="del(activity.momentId)" style="margin-bottom:0px; float:right">删除</el-button>
+                <!-- <el-button type="primary" @click="gettheCommunity()">搜索</el-button> -->
               </el-card>
           </el-timeline-item>
         </el-timeline>
-
     </el-card>
 
   <el-dialog :visible.sync="dialogFormVisible" width="40%" :close-on-click-modal="false">
@@ -47,7 +51,7 @@
 
     <el-form ref="form" :model="form" label-width="120px">
         <el-form-item style="margin-left:-120px; width:100%">
-          <el-input v-model="form.content" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
+          <el-input v-model="form.momentContent" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
         </el-form-item>
     </el-form>
 
@@ -74,41 +78,98 @@
     }
 </style>
 
+
 <script>
-export default {
-  data() {
-    return {
-      dialogFormVisible: false,
-      form: {
-        content: '',
-        
-      },
-      activities: [
-        {
-          // picture:'../assets/logo.png',
-          name:'海亦',
-          content: 'Success',
-          timestamp: '2021-04-17 17:00',
+import axios from 'axios'
+  let urlBase;
+  urlBase = "/api/v1/community/";
+  export default {
+    data() {
+      return {
+        dialogFormVisible: false,
+        theactivities:[],
+        form: {
+          userId:0,
+          momentContent:'',
+          momentTime:'',
+          songs_id:null,
         },
-        {
-          // picture:'../assets/logo.png',
-          name:'初晴',
-          content: 'Success',
-          timestamp: '2021-04-16 17:00',
-        },
-      ],
-    }
-  },
-  methods: {
-    onSubmit() {
-      console.log('submit!')
-      alert("分享成功"); 
-      this.dialogFormVisible=false;
+        code:[{}],
+        i:0,
+        activities: [
+          // {
+          //   // picture:'../assets/logo.png',
+          //   name:'海亦',
+          //   content: 'Success',
+          //   timestamp: '2021-04-17 17:00',
+          // },
+          // {
+          //   // picture:'../assets/logo.png',
+          //   name:'初晴',
+          //   content: 'Success',
+          //   timestamp: '2021-04-16 17:00',
+          // },
+        ],
+      }
     },
-  },
+    created() {
+      // this.loadTable();目前这句没有屁用
+      this.gettheCommunity();
+      var test=localStorage.getItem('userToken')
+      test=JSON.parse(test)  
+      this.userId=test.userId
+          },
+    methods: {
+      onSubmit() {
+        console.log('submit!')
+        alert("分享成功"); 
+        this.dialogFormVisible=false;
+        this.posttheCommunity();
+      },
+      del(themomentId){
+        axios.delete('http://localhost:8910/community/delete_community',{
+          data:{
+            momentId:themomentId
+            }
+          })
+        this.gettheCommunity();
+        },
+   
+      posttheCommunity(){
+        var time=new Date().toLocaleString('chinese',{hour12:false});
+        this.form.momentTime = time.toLocaleString( ); //获取日期与时间
+        console.log(this.form)
+        const data = {
+            momentTime:this.form.momentTime,
+            momentContent:this.form.momentContent,
+            userId:1,
+        }
+        axios.post('http://localhost:8910/community/post_community/',data)
+        .then((res)=>{
+            console.log(res);   //  处理成功的函数 相当于success
+        })
+        .catch((error)=>{
+            console.log(error)  //  错误处理 相当于error
+        })
+      },
+      async gettheCommunity () {
+        const { data: res1 } =await this.$http.get('http://localhost:8910/community/getall',)
+        this.activities=res1;
+        console.log(this.activities);
+          for(this.i=0;this.i<this.activities.length;this.i++)
+          {
+            const { data: res2 } =await this.$http.get('http://localhost:8901/user/get_user/'+this.activities[this.i].userId,)
+            this.theactivities. push. apply ( this.theactivities , [res2] ) ;
+          }
+        
+        console.log(this.activities);
+        console.log(this.theactivities);
+        },
+
+
+
+      },
+  
+
 }
 </script>
-
-
-
-
