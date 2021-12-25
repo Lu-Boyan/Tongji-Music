@@ -18,8 +18,15 @@
     resizable=“false”>
     <el-table-column
       fixed="left"
+      prop="userId"
+      align= "left"
+      resizable=“false”
+      style="color:#DDDD22 !important">
+    </el-table-column>
+    <el-table-column
+      fixed="left"
       prop="commentContent"
-      min-width="225%"
+      min-width="180%"
       align= "left"
       resizable=“false”
       style="color:#DDDD22 !important">
@@ -27,7 +34,6 @@
     <el-table-column
       fixed="left"
       prop="commentTime"
-
       align= "left"
       resizable=“false”
       style="color:#DDDD22 !important">
@@ -48,14 +54,15 @@
 
       <template slot-scope="scope">
         <el-button
-          @click.native.prevent="play(scope.$index, tableData)"
+          @click.native.prevent="play($event,scope.$index, tableData)"
           class="el-icon-thumb"
-          size="large"
+          size="small"
           circle/>
         <el-button
           @click.native.prevent="deleteRow(scope.$index, tableData)"
           class="el-icon-close"
-          size="large"
+
+          size="small"
           circle/>
       </template>
     </el-table-column>
@@ -65,18 +72,33 @@
 
 
 <script>
-import axios from 'axios'
+import $ from 'jquery'
   export default {
     data() {
 
       return {
+
         commentTableData: [],
         contentData : ''
+
       }
     },
     methods: {
-      play(index,rows){
-        console.log(rows.name);
+      play(obj,index,rows){
+
+
+
+       // console.log(obj)
+        //$(obj).css("black")
+        //console.log(this.commentTableData[index]);
+        if(this.commentTableData[index].like==false)
+        {
+          this.commentTableData[index].thumbNum++;
+          this.commentTableData[index].like=true;
+        }
+        //console.log(rows)
+
+
       },
       deleteRow(index, rows) {
         rows.splice(index, 1);
@@ -89,13 +111,10 @@ import axios from 'axios'
         this.commentTableData.splice(1,this.commentTableData.length-1)
         for(var i = 0;i<res.data.length;i++)
         {
-
-          this.commentTableData.push(res.data[i]);
-          console.log(this);
-
+          this.commentTableData.push(res.data[i])
+          console.log(this)
         }
-
-    })
+        })
       },
       addData(){
         var url = 'http://localhost:8902/comment/add_comment/2/2/';
