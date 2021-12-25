@@ -88,8 +88,8 @@ import $ from 'jquery'
 
 
 
-       // console.log(obj)
-        //$(obj).css("black")
+       console.log($(obj.target))
+        $(obj.target).css("background-color", "red");
         //console.log(this.commentTableData[index]);
         if(this.commentTableData[index].like==false)
         {
