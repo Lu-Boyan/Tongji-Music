@@ -1,16 +1,17 @@
 <template>
 <div class="table">
   <el-collapse v-model="activeNames" @change="handleChange" class="collapse">
-  <el-collapse-item title="我创建的歌单" name="1" style="width: 100%; background-color:unset;" class="collapse_item">
+  <el-collapse-item title="我创建的歌单" name="1" style="color:white;width: 100%; background-color:unset;!important"
+                    class="collapse_item">
   <el-table
     :data="myListTableData"
     style="width: 100%; background-color:unset;"
     resizable=“false”>
-    <el-table-column label="songslistId" align="center" prop="songslistId" v-if="false" />
+    <el-table-column label="songslistId" align="center" prop="songslistId" background-color:unset v-if="false" />
     <el-table-column
       fixed="left"
       prop="songslistName"
-      label="我的歌单"
+      label="歌单名"
       align= "center"
       resizable=“false”
       style="color:#DDDD22 !important">
@@ -30,18 +31,20 @@
         <el-button
           @click.native.prevent="play(scope.$index, myListTableData)"
           class="el-icon-caret-right"
+          background-color:unset;
           size="large"
           circle/>
         <el-button
           @click.native.prevent="deleteRow(scope.$index, myListTableData)"
           class="el-icon-close"
+          background-color:unset;
           size="large"
           circle/>
       </template>
     </el-table-column>
   </el-table>
   </el-collapse-item>
-    <el-collapse-item title="我收藏的歌单" name="2" style="background-color:transparent; border:0px; color:#90F7F7 !important;">
+    <el-collapse-item title="我收藏的歌单" name="2" background-color:unset>
       <el-table
         :data="myListTableData"
         style="width: 100%; background-color:unset;"
@@ -50,7 +53,7 @@
         <el-table-column
           fixed="left"
           prop="songslistName"
-          label="我的歌单"
+          label="歌单名"
           align= "center"
           resizable=“false”
           style="color:#DDDD22 !important">
@@ -95,7 +98,8 @@
           songslistName:'暂无数据',
           songslistId:''
         }],
-        activeNames:['1'],
+        activeNames:['1','2'],
+        show:true
       }
     },
     methods: {
@@ -106,13 +110,13 @@
         this.$http.get('http://localhost:8903/listcollect/get_list/'+window.localStorage.getItem("userToken").userId)
           .then(res =>{
             console.log(res);
-
           })
           .catch(err => {
             console.log(err);
           })
       },
       handleChange(val) {
+        this.activeNames=['1','2'];
         console.log(val);
       },
       view(index,rows) {
@@ -142,6 +146,19 @@
   }
 </script>
 <style>
+.el-collapse .el-collapse-item{
+  color: #DDDD22;
+background-color: unset !important}
+.el-collapse-item .el-collapse-item__header{
+  color: #DDDD22;
+background-color: unset !important}
+.el-collapse-item__header.is-active{
+border-bottom-color: #00e1ff;
+}
+.el-collapse-item .el-collapse-item__wrap{
+  color: #DDDD22;
+background-color: unset !important}
+
 .el-table,
         .el-table__expanded-cell {
             background-color: transparent !important;
@@ -157,10 +174,9 @@
   /* 表格字体颜色 */
   color: #DDDD22;
   /* 表格边框颜色 */
-  border: 0.5px solid #fcfcfc00;
+  border: 0.5px solid unset;
   height: 80%;
 }
-
 .el-table::before {
   left: 0;
   bottom: 0;
