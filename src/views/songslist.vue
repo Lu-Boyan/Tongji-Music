@@ -40,7 +40,7 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click="playthis(scope.$index)">播放</el-dropdown-item>
               <el-dropdown-item @click="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
-              <el-dropdown-item @click="deleterow(scope.$index)">从歌单删除</el-dropdown-item>
+              <el-dropdown-item @click="deleteMusic(scope.$index)">从歌单删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -60,60 +60,82 @@ export default {
     }
   },
   methods: {
-    deleteRow(index) {
-      this.$http.get('http://localhost:8903/listcollect/get_list/'+rows[index].songsId)
+    successDelete() {
+      this.$alert('该歌曲成功从歌单中删除！', '消息通知', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.$message({
+            type: 'info',
+            message: `action: ${ action }`
+          });
+        }
+      });
+    },
+    failDelete() {
+      this.$alert('很抱歉，由于奇怪的原因，该歌曲从歌单中删除失败！', '消息通知', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.$message({
+            type: 'info',
+            message: `action: ${ action }`
+          });
+        }
+      });
+    },
+    deleteMusic(index) {
+      if(window.localStorage.getItem("modifiable")=='1'){
+      this.$http.get('http://localhost:8082/api/songs/delete/songslistId='+this.selectedSongslistId+'songsId'+rows[index].songsId)
         .then(res =>{
           console.log(res);
-
+          if(res.data=="删除成功"){
+            this.songsTableData.splice(index,1);
+            this.successDelete();
+          }
+          else{
+            this.failDelete();
+          }
         })
         .catch(err => {
           console.log(err);
-        })
+        })}
+      else{
+        this.$alert('抱歉，该歌单不是您创建的，无法删除！', '消息通知', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.$message({
+              type: 'info',
+              message: `action: ${ action }`
+            });
+          }
+        });
+      }
     },
     playthis(index){
-      window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);
+      window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);//播放这首歌
       let playlist=window.localStorage.getItem('curruntPlayList');
       let ii=window.localStorage.getItem('curruntIndex');
-      let newplaylist=[];
-      newplaylist.push(this.playlistTableData[index]);
-      for(let i=0;i<this.playlistTableData.length;i++){
-        if(i==index)
-          continue;
-        else{
-          newplaylist.push(this.playlistTableData[i]);
-        }
+      playlist.splice(ii+index,1);//删除这首歌
+      if(ii==0){//添加到curruntIndex指的位置
+        playlist.unshift(this.playlistTableData[index]);
       }
-      this.playlistTableData=newplaylist;
-      playlist.splice(ii,this.songsTableData.length);
-      for(let i=0;i<newplaylist.length;i++){
-        playlist.push(newplaylist[i])
+      else{
+        playlist.splice(ii-1,0,this.playlistTableData[index]);
       }
       window.localStorage.setItem('curruntPlayList',playlist);
-
     },
     addNextPlay(index){
       let playlist=window.localStorage.getItem('curruntPlayList');
       let ii=window.localStorage.getItem('curruntIndex');
-      let newplaylist=[];
-      newplaylist.push(this.playlistTableData[index]);
-      for(let i=1;i<this.playlistTableData.length;i++){
-        if(i==index)
-          continue;
-        else{
-          newplaylist.push(this.playlistTableData[i]);
-        }
+      if(ii+index!=0){
+        playlist.splice(ii+index,1);//删除这首歌
+        playlist.splice(ii,0,this.playlistTableData[index]);
+        window.localStorage.setItem('curruntPlayList',playlist);
       }
-      this.playlistTableData=newplaylist;
-      playlist.splice(ii+1,this.songsTableData.length);
-      for(let i=0;i<newplaylist.length;i++){
-        playlist.push(newplaylist[i])
-      }
-      window.localStorage.setItem('curruntPlayList',playlist);
     },
   },
   mounted:function () {//自动触发写入的函数
     this.selectedSongslistId=window.localStorage.getItem("selectedSongslistId");
-    this.$http.get('http://localhost:8903/listcollect/get_list/'+this.selectedSongslistId)
+    this.$http.get('http://localhost:8082/api/listcollect/get_list/'+this.selectedSongslistId)
       .then(res =>{
         console.log(res.data);
         this.songsTableData.splice(0,this.songsTableData.length);

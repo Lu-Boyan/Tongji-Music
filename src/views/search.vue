@@ -102,44 +102,26 @@
           })
       },
       playthis(index){
-        window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);
+        window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);//播放这首歌
         let playlist=window.localStorage.getItem('curruntPlayList');
         let ii=window.localStorage.getItem('curruntIndex');
-        let newplaylist=[];
-        newplaylist.push(this.playlistTableData[index]);
-        for(let i=0;i<this.playlistTableData.length;i++){
-          if(i==index)
-            continue;
-          else{
-            newplaylist.push(this.playlistTableData[i]);
-          }
+        playlist.splice(ii+index,1);//删除这首歌
+        if(ii==0){//添加到curruntIndex指的位置
+          playlist.unshift(this.playlistTableData[index]);
         }
-        this.playlistTableData=newplaylist;
-        playlist.splice(ii,this.songsTableData.length);
-        for(let i=0;i<newplaylist.length;i++){
-          playlist.push(newplaylist[i])
+        else{
+          playlist.splice(ii-1,0,this.playlistTableData[index]);
         }
         window.localStorage.setItem('curruntPlayList',playlist);
-
       },
       addNextPlay(index){
         let playlist=window.localStorage.getItem('curruntPlayList');
         let ii=window.localStorage.getItem('curruntIndex');
-        let newplaylist=[];
-        newplaylist.push(this.playlistTableData[index]);
-        for(let i=1;i<this.playlistTableData.length;i++){
-          if(i==index)
-            continue;
-          else{
-            newplaylist.push(this.playlistTableData[i]);
-          }
+        if(ii+index!=0){
+          playlist.splice(ii+index,1);//删除这首歌
+          playlist.splice(ii,0,this.playlistTableData[index]);
+          window.localStorage.setItem('curruntPlayList',playlist);
         }
-        this.playlistTableData=newplaylist;
-        playlist.splice(ii+1,this.songsTableData.length);
-        for(let i=0;i<newplaylist.length;i++){
-          playlist.push(newplaylist[i])
-        }
-        window.localStorage.setItem('curruntPlayList',playlist);
       },
       handleSearch() {
         this.$http.get('http://localhost:3000/search?keywords='+this.state)

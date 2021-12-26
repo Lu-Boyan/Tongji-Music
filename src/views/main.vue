@@ -27,6 +27,7 @@
         <router-view/>
       </el-main>
     </el-container>
+      <tjmFooter/>
   </div>
 </div>
 </template>
@@ -36,11 +37,13 @@
 import tjmHeader from '../components/tjmHeader/tjmHeader.vue'
 import tjmMusiclist from '../components/tjmMusiclist/tjmMusiclist.vue'
 import mainPage from '../views/mainPage.vue'
+import tjmFooter from "../components/tjmFooter/tjmFooter";
 export default{
   components:{
     tjmHeader,
     tjmMusiclist,
-    mainPage
+    mainPage,
+    tjmFooter,
   }
 }
 </script>

@@ -1,13 +1,13 @@
 <template>
   <div class="tjmFooter">
     <el-container>
-      <el-aside width="890px">
+      <el-aside width="1200px">
         <el-container>
 
-          <el-aside width="150px">
+          <el-aside width="250px">
 
             <el-button
-              style="margin-top:30px;margin-left:20px !important;"
+              style="margin-top:30px;margin-left:100px !important;"
               class="el-icon-d-arrow-left"
               size="large"
               @click="lastSong()"

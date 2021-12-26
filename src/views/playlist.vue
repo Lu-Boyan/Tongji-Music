@@ -61,44 +61,26 @@
     },
     methods:{
       playthis(index){
-        window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);
+        window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);//播放这首歌
         let playlist=window.localStorage.getItem('curruntPlayList');
         let ii=window.localStorage.getItem('curruntIndex');
-        let newplaylist=[];
-        newplaylist.push(this.playlistTableData[index]);
-        for(let i=0;i<this.playlistTableData.length;i++){
-          if(i==index)
-            continue;
-          else{
-            newplaylist.push(this.playlistTableData[i]);
-          }
+        playlist.splice(ii+index,1);//删除这首歌
+        if(ii==0){//添加到curruntIndex指的位置
+          playlist.unshift(this.playlistTableData[index]);
         }
-        this.playlistTableData=newplaylist;
-        playlist.splice(ii,this.songsTableData.length);
-        for(let i=0;i<newplaylist.length;i++){
-          playlist.push(newplaylist[i])
+        else{
+          playlist.splice(ii-1,0,this.playlistTableData[index]);
         }
         window.localStorage.setItem('curruntPlayList',playlist);
-
       },
       addNextPlay(index){
         let playlist=window.localStorage.getItem('curruntPlayList');
         let ii=window.localStorage.getItem('curruntIndex');
-        let newplaylist=[];
-        newplaylist.push(this.playlistTableData[index]);
-        for(let i=1;i<this.playlistTableData.length;i++){
-          if(i==index)
-            continue;
-          else{
-            newplaylist.push(this.playlistTableData[i]);
-          }
+        if(ii+index!=0){
+          playlist.splice(ii+index,1);//删除这首歌
+          playlist.splice(ii,0,this.playlistTableData[index]);
+          window.localStorage.setItem('curruntPlayList',playlist);
         }
-        this.playlistTableData=newplaylist;
-        playlist.splice(ii+1,this.songsTableData.length);
-        for(let i=0;i<newplaylist.length;i++){
-          playlist.push(newplaylist[i])
-        }
-        window.localStorage.setItem('curruntPlayList',playlist);
       },
       remove(index){
         let playlist=window.localStorage.getItem('curruntPlayList');
@@ -111,32 +93,34 @@
         this.playlistId=window.localStorage.getItem('defaultPlayslist');
     },
     mounted:function () {//自动触发写入的函数
-      if(this.playlistTableData==[]){
-      this.playlistTableData.splice(0,this.playlistTableData.length);
-      this.$http.get('http://localhost:8903/songs/get_songs/'+this.playlistId)
-      .then(res =>{
-          console.log(res);
-          let list={
-            songsName:'',
-            songsArtistsName:'',
-            songsTime:''
-          };
-          let index=window.localStorage.getItem('curruntIndex');
-          for(let i = index;i<res.data.length;i++)
-          {
-            list.songsName=res.data[i].songsName;//需要修改
-            list.songsArtistsName=res.data[i].songsArtistsName;
-            list.songsTime=res.data[i].songsTime;
-            this.playlistTableData.push(list);
-          }
-          window.localStorage.setItem('curruntPlayList',this.playlistTableData)
-        })
-        .catch(err => {
-          console.log(err);
-        })
+      let playlist=window.localStorage.getItem('curruntPlayList');
+      if(playlist==null){
+        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.playlistId)
+        .then(res =>{
+            console.log(res);
+            let list={
+              songsName:'',
+              songsArtistsName:'',
+              songsTime:''
+            };
+            window.localStorage.setItem('curruntIndex','0');
+            for(let i = 0;i<res.data.length;i++)
+            {
+              list.songsName=res.data[i].songsName;//需要修改
+              list.songsArtistsName=res.data[i].songsArtistsName;
+              list.songsTime=res.data[i].songsTime;
+              this.playlistTableData.push(list);
+            }
+            window.localStorage.setItem('curruntPlayList',this.playlistTableData)
+          })
+          .catch(err => {
+            console.log(err);
+          })
       }
       else{
-          this.playlistTableData=window.localStorage.getItem('curruntPlayList');
+        this.playlistTableData=[];
+        for(let i=window.localStorage.getItem('curruntIndex');i<playlist.length;i++)
+          this.playlistTableData.push(playlist[i]);
       }
     }
   }
