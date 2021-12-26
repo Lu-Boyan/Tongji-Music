@@ -1,12 +1,12 @@
 <template>
 <div class="mainPage">
-<el-container>
+<el-container >
   <el-container>
   <el-aside width="20%">
     <tjmMusiclist/>
   </el-aside>
   <el-main>
-    <el-container>
+    <el-container >
     <el-aside width="700px">
     <el-row class="menu-button">
         <el-button class="tjmbutton" type="primary" height:40px plain style="background-color:transparent; border:0px; color:#90F7F7 !important;">
@@ -31,9 +31,9 @@
       <tjmSongWords/>
     </el-main>
     </el-container>
-    <el-footer height="200px">
+    <!-- <el-footer height="200px">
       <tjmFooter/>
-    </el-footer>
+    </el-footer> -->
   </el-main>
   </el-container>
 </el-container>

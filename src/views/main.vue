@@ -57,7 +57,7 @@ export default{
 }
 .background{
     background-image: url(../assets/background.jpeg);
-    height: 110%;
+    height: 85%;
 		width: 100%;
 		background-size: 100% 100%;
     background-repeat: no-repeat;
