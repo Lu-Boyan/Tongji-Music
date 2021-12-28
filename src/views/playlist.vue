@@ -38,9 +38,9 @@
                       <i class="el-icon-more"></i>
                   </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click="playthis(scope.$index)">播放</el-dropdown-item>
-                      <el-dropdown-item @click="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
-                      <el-dropdown-item @click="remove(scope.$index)">从播放列表删除</el-dropdown-item>
+                      <el-dropdown-item><label @click="playthis(scope.$index)" >播放</label></el-dropdown-item>
+                      <el-dropdown-item><label @click="addNextPlay(scope.$index)" >添加到下一首播放</label></el-dropdown-item>
+                      <el-dropdown-item><label @click="remove(scope.$index)" >从播放列表删除</label></el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </template>

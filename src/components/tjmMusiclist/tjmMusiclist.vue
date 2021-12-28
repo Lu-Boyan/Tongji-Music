@@ -4,10 +4,10 @@
   <el-collapse-item title="    我创建的歌单" name="1" style="color:white;width: 100%; background-color:unset;!important"
                     class="collapse_item">
   <el-table
-    :data="createListTableData"
+    :data="this.createListTableData"
     style="width: 100%; background-color:unset;"
     resizable=“false”>
-    <el-table-column label="songsListId" align="center" prop="songsListId" background-color:unset v-if="false" />
+    <el-table-column label="songsListId" align="center" prop="songsListId" v-if="false" />
     <el-table-column
       fixed="left"
       prop="songsListName"
@@ -15,11 +15,7 @@
       align= "center"
       resizable=“false”
       style="color:#DDDD22 !important">
-      <template slot-scope="scope">
-          <div>
-            <a href="javascript:;" @click="view(scope.$index,this.createListTableData)">{{scope.row.songslistName}}</a>
-          </div>
-      </template>
+
     </el-table-column>
     <el-table-column
       label=""
@@ -58,11 +54,7 @@
           align= "center"
           resizable=“false”
           style="color:#DDDD22 !important">
-          <template slot-scope="scope">
-            <div>
-              <a href="javascript:;" @click="view(scope.$index,this.colloctListTableData)">{{scope.row.songslistName}}</a>
-            </div>
-          </template>
+
         </el-table-column>
         <el-table-column
           label=""
@@ -95,14 +87,8 @@
   export default {
     data() {
       return {
-        createListTableData: [{
-          songsListName:'暂无数据',
-          songsListId:''
-        }],
-        colloctListTableData: [{
-          songsListName:'暂无数据',
-          songsListId:''
-        }],
+        createListTableData: [],
+        colloctListTableData: [],
         activeNames:['1','2'],
         show:true
       }
@@ -160,14 +146,14 @@
       },
       play(index,rows){
         console.log(rows[index]);
-        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+rows[index].songslistId)
+        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+rows[index].songsListId)
           .then(res =>{
             console.log(res);
             window.localStorage.setItem('currentIndex','0');
             let playlist=[];
             for(let i = 0;i<res.data.length;i++)
             {
-              playlist.push(res.data[0]);
+              playlist.push(res.data[i]);
             }
             window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
             window.localStorage.setItem('currentSongsId',playlist[0].songsId);
@@ -214,14 +200,16 @@
         window.localStorage.setItem("modifiable",'1');
       this.$http.get('http://localhost:8082/api/songslist/get/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
           .then(res =>{//获取创建的歌单
-          console.log(res.data);
           if(window.localStorage.getItem("selectedSongslistId")==null)
             window.localStorage.setItem("selectedSongslistId",res.data[0].songsListId);
+          let obj={
+            songsListName:'',
+            songsListId:''
+          }
           alert(res.data[0].songsListName);
           for(let i = 0;i<res.data.length;i++)
           {
             this.createListTableData.push(res.data[i]);//需要修改
-            console.log(this);
           }
           console.log(this.createListTableData);
           window.localStorage.setItem("mySongslist",JSON.stringify(this.createListTableData));

@@ -123,6 +123,7 @@
           })
       },
       playthis(index){
+        alert("hhhh")
         window.localStorage.setItem('currentSongsId',this.searchTableData[index].songsId);//播放这首歌
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');

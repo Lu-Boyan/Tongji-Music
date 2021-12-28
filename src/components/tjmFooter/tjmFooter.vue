@@ -20,7 +20,7 @@
               circle/>
           </el-aside>
           <el-main>
-            <audio ref="audio" src="" style="width:100%; " controls="controls" @ended="nextSong()">
+            <audio ref="audio" :src="songsSrc" style="width:100%; " controls="controls" @ended="nextSong()">
               Your browser does not support the audio element.
             </audio>
           </el-main>
@@ -52,6 +52,7 @@ export default{
   },
   data() {
     return {
+      songsSrc:''
     }
   },
   methods:{
@@ -59,10 +60,9 @@ export default{
     {
       let songsId=window.localStorage.getItem('currentSongsId');
       if(songsId){
-        this.$http.get('http://localhost:3000/song/url?id='+songsId)
+        this.$http.get('http://47.101.183.170:3000/song/url?id='+songsId)
           .then(res =>{
-            console.log(res.data);
-            this.$refs.audio.src=res.data.url;
+            this.songsSrc=res.data.data[0].url;
             this.$refs.audio.play();
           })
           .catch(err => {
@@ -82,6 +82,8 @@ export default{
     },
     lastSong()
     {
+      alert(window.localStorage.getItem("currentSongsId"));
+      this.playSong();
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       let index=window.localStorage.getItem("currentIndex");
       index--;
@@ -104,15 +106,16 @@ export default{
       window.localStorage.setItem("currentIndex",'0');
     }
     if(songsListId=window.localStorage.getItem("currentSongsId")==null){
-      window.localStorage.setItem("currentIndex",'1');
-      songsListId=1;
+      window.localStorage.setItem("currentSongsId",'347230');
+      songsListId=347230;
     }
-    let playlist=window.localStorage.getItem('currentPlayList');
+    let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
     if(playlist){
-      this.$http.get('http://localhost:3000/song/url?id='+playlist[songsListId].songsId)
+      this.$http.get('http://47.101.183.170:3000/song/url?id='+playlist[0].songsId)
         .then(res =>{
-          console.log(res.data);
-          this.$refs.audio.src=res.data.url;
+          window.localStorage.setItem("currentSongsId",playlist[0].songsId);
+          console.log(res.data.data[0].url);
+          this.songsSrc=res.data.data[0].url;
         })
         .catch(err => {
           console.log(err);
