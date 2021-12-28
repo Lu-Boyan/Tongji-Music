@@ -105,7 +105,7 @@ import $ from 'jquery'
       },
       getData(){
         console.log('@');
-        this.$http.get('http://localhost:8902/comment/get_comment_by_songsId/2')
+        this.$http.get('http://localhost:8082/api/comment/get_comment_by_songsId/2')
         .then(res => {
         console.log(res.data);
         this.commentTableData.splice(1,this.commentTableData.length-1)

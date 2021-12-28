@@ -90,7 +90,7 @@ export default{
     login() {
       const self = this;
       if (self.form.user_id != "" && self.form.userpwd != "") {
-        axios.get('http://localhost:8901/user/login', {
+        axios.get('http://localhost:8082/api/user/login', {
           params: {
             userId: self.form.user_id,
             userPassword: self.form.userpwd
@@ -125,7 +125,7 @@ export default{
     register() {
       const self = this;
       if (self.form.username != "" && self.form.useremail != "" && self.form.userpwd != "") {
-        axios.post('http://localhost:8901/user/add_user', {
+        axios.post('http://localhost:8082/api/user/add_user', {
           "userId": "",
           "userPassword": self.form.userpwd,
           "userEmail": self.form.useremail,

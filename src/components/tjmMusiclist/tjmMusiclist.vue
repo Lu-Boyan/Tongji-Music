@@ -7,10 +7,10 @@
     :data="createListTableData"
     style="width: 100%; background-color:unset;"
     resizable=“false”>
-    <el-table-column label="songslistId" align="center" prop="songslistId" background-color:unset v-if="false" />
+    <el-table-column label="songsListId" align="center" prop="songsListId" background-color:unset v-if="false" />
     <el-table-column
       fixed="left"
-      prop="songslistName"
+      prop="songsListName"
       label="歌单名"
       align= "center"
       resizable=“false”
@@ -32,12 +32,12 @@
       </template>
       <template slot-scope="scope">
         <el-button
-          @click.native.prevent="play(scope.$index, myListTableData)"
+          @click.native.prevent="play(scope.$index,createListTableData)"
           class="el-icon-caret-right"
           size="large"
           circle/>
         <el-button
-          @click.native.prevent="deleteRow(scope.$index, myListTableData)"
+          @click.native.prevent="deleteRow(scope.$index, createListTableData)"
           class="el-icon-close"
           size="large"
           circle/>
@@ -50,10 +50,10 @@
         :data="colloctListTableData"
         style="width: 100%; background-color:unset;"
         resizable=“false”>
-        <el-table-column label="songslistId" align="center" prop="songslistId" v-if="false" />
+        <el-table-column label="songsListId" align="center" prop="songsListId" v-if="false" />
         <el-table-column
           fixed="left"
-          prop="songslistName"
+          prop="songsListName"
           label="歌单名"
           align= "center"
           resizable=“false”
@@ -72,12 +72,12 @@
           style="color:#DDDD22 !important">
           <template slot-scope="scope">
             <el-button
-              @click.native.prevent="play(scope.$index)"
+              @click.native.prevent="play(scope.$index,colloctListTableData)"
               class="el-icon-caret-right"
               size="large"
               circle/>
             <el-button
-              @click.native.prevent="deleteRow(scope.$index)"
+              @click.native.prevent="deleteRow(scope.$index,colloctListTableData)"
               class="el-icon-close"
               size="large"
               circle/>
@@ -96,12 +96,12 @@
     data() {
       return {
         createListTableData: [{
-          songslistName:'暂无数据',
-          songslistId:''
+          songsListName:'暂无数据',
+          songsListId:''
         }],
         colloctListTableData: [{
-          songslistName:'暂无数据',
-          songslistId:''
+          songsListName:'暂无数据',
+          songsListId:''
         }],
         activeNames:['1','2'],
         show:true
@@ -113,9 +113,9 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
-          this.$http.get('http://localhost:8082/api/songs/add/userId='
-            +window.localStorage.getItem("userToken").userId
-            +'songslistName='+value)
+          this.$http.get('http://localhost:8082/api/songs/add?userId='
+            +JSON.parse(window.localStorage.getItem("userToken")).userId
+            +'&songslistName='+value)
             .then(res =>{
               this.$message({
                 type: 'success',
@@ -158,36 +158,30 @@
           }
         });
       },
-      play(index){
-        console.log(this.myListTableData[index]);
-        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.myListTableData[index].songslistId)
+      play(index,rows){
+        console.log(rows[index]);
+        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+rows[index].songslistId)
           .then(res =>{
             console.log(res);
-            let list={
-              songsName:'',
-              songsArtistsName:'',
-              songsTime:''
-            };
-            window.localStorage.setItem('curruntIndex','0');
+            window.localStorage.setItem('currentIndex','0');
+            let playlist=[];
             for(let i = 0;i<res.data.length;i++)
             {
-              list.songsName=res.data[i].songsName;//需要修改
-              list.songsArtistsName=res.data[i].songsArtistsName;
-              list.songsTime=res.data[i].songsTime;
-              this.playlistTableData.push(list);
+              playlist.push(res.data[0]);
             }
-            window.localStorage.setItem('curruntPlayList',this.playlistTableData)
+            window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
+            window.localStorage.setItem('currentSongsId',playlist[0].songsId);
           })
           .catch(err => {
             console.log(err);
           })
       },
-      deleteRow(index) {
-        this.$http.get('http://localhost:8082/api/songslist/delete/'+this.myListTableData[index].songslistId)
+      deleteRow(index,rows) {
+        this.$http.get('http://localhost:8082/api/songslist/delete?'+rows[index].songslistId)
           .then(res =>{
             console.log(res);
             if(res.data=="删除成功"){
-              this.myListTableData.splice(index,1);
+              rows.splice(index,1);
               this.successDelete();
             }
             else{
@@ -217,22 +211,25 @@
       this.createListTableData.splice(0,this.createListTableData.length);
       this.colloctListTableData.splice(0,this.colloctListTableData.length);
       if(window.localStorage.getItem("modifiable")==null)
-        window.localStorage.setItem("modifiable",1);
-      this.$http.get('http://localhost:8082/api/songslist/get/'+window.localStorage.getItem("userToken").userId)
+        window.localStorage.setItem("modifiable",'1');
+      this.$http.get('http://localhost:8082/api/songslist/get/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
           .then(res =>{//获取创建的歌单
           console.log(res.data);
           if(window.localStorage.getItem("selectedSongslistId")==null)
             window.localStorage.setItem("selectedSongslistId",res.data[0].songsListId);
+          alert(res.data[0].songsListName);
           for(let i = 0;i<res.data.length;i++)
           {
             this.createListTableData.push(res.data[i]);//需要修改
             console.log(this);
           }
+          console.log(this.createListTableData);
+          window.localStorage.setItem("mySongslist",JSON.stringify(this.createListTableData));
         })
         .catch(err => {
           console.log(err);
-        })
-      this.$http.get('http://localhost:8082/api/songslist/get/'+window.localStorage.getItem("userToken").userId)
+        });
+      this.$http.get('http://localhost:8082/api/listcollect/get/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
         .then(res =>{//获取收藏的歌单
           console.log(res.data);
           if(window.localStorage.getItem("selectedSongslistId")==null){

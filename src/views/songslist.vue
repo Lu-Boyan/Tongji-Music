@@ -84,7 +84,9 @@ export default {
     },
     deleteMusic(index) {
       if(window.localStorage.getItem("modifiable")=='1'){
-      this.$http.get('http://localhost:8082/api/songs/delete/songslistId='+this.selectedSongslistId+'songsId'+rows[index].songsId)
+      this.$http.delete('http://localhost:8082/api/songs/delete?'
+        + 'songslistId='+this.selectedSongslistId
+        +'songsId'+rows[index].songsId)
         .then(res =>{
           console.log(res);
           if(res.data=="删除成功"){
@@ -111,25 +113,25 @@ export default {
       }
     },
     playthis(index){
-      window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);//播放这首歌
-      let playlist=window.localStorage.getItem('curruntPlayList');
-      let ii=window.localStorage.getItem('curruntIndex');
+      window.localStorage.setItem('currentSongsId',this.songsTableData[index].songsId);//播放这首歌
+      let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+      let ii=window.localStorage.getItem('currentIndex');
       playlist.splice(ii+index,1);//删除这首歌
-      if(ii==0){//添加到curruntIndex指的位置
-        playlist.unshift(this.playlistTableData[index]);
+      if(ii==0){//添加到currentIndex指的位置
+        playlist.unshift(this.songsTableData[index]);
       }
       else{
-        playlist.splice(ii-1,0,this.playlistTableData[index]);
+        playlist.splice(ii-1,0,this.songsTableData[index]);
       }
-      window.localStorage.setItem('curruntPlayList',playlist);
+      window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
     },
     addNextPlay(index){
-      let playlist=window.localStorage.getItem('curruntPlayList');
-      let ii=window.localStorage.getItem('curruntIndex');
+      let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+      let ii=window.localStorage.getItem('currentIndex');
       if(ii+index!=0){
         playlist.splice(ii+index,1);//删除这首歌
-        playlist.splice(ii,0,this.playlistTableData[index]);
-        window.localStorage.setItem('curruntPlayList',playlist);
+        playlist.splice(ii,0,this.songsTableData[index]);
+        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       }
     },
   },

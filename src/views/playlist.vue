@@ -61,39 +61,39 @@
     },
     methods:{
       playthis(index){
-        window.localStorage.setItem('curruntSongsId',this.playlistTableData[index].songsId);//播放这首歌
-        let playlist=window.localStorage.getItem('curruntPlayList');
-        let ii=window.localStorage.getItem('curruntIndex');
+        window.localStorage.setItem('currentSongsId',this.playlistTableData[index].songsId);//播放这首歌
+        let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+        let ii=window.localStorage.getItem('currentIndex');
         playlist.splice(ii+index,1);//删除这首歌
-        if(ii==0){//添加到curruntIndex指的位置
+        if(ii==0){//添加到currentIndex指的位置
           playlist.unshift(this.playlistTableData[index]);
         }
         else{
           playlist.splice(ii-1,0,this.playlistTableData[index]);
         }
-        window.localStorage.setItem('curruntPlayList',playlist);
+        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       },
       addNextPlay(index){
-        let playlist=window.localStorage.getItem('curruntPlayList');
-        let ii=window.localStorage.getItem('curruntIndex');
+        let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+        let ii=window.localStorage.getItem('currentIndex');
         if(ii+index!=0){
           playlist.splice(ii+index,1);//删除这首歌
           playlist.splice(ii,0,this.playlistTableData[index]);
-          window.localStorage.setItem('curruntPlayList',playlist);
+          window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
         }
       },
       remove(index){
-        let playlist=window.localStorage.getItem('curruntPlayList');
-        let ii=window.localStorage.getItem('curruntIndex');
+        let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+        let ii=window.localStorage.getItem('currentIndex');
         playlist.splice(ii+index,ii+index+1);
-        window.localStorage.setItem('curruntPlayList',playlist);
+        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       }
     },
     beforeMount() {
-        this.playlistId=window.localStorage.getItem('defaultPlayslist');
+        this.playlistId=window.localStorage.getItem('defaultPlaylist');
     },
     mounted:function () {//自动触发写入的函数
-      let playlist=window.localStorage.getItem('curruntPlayList');
+      let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       if(playlist==null){
         this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.playlistId)
         .then(res =>{
@@ -103,7 +103,7 @@
               songsArtistsName:'',
               songsTime:''
             };
-            window.localStorage.setItem('curruntIndex','0');
+            window.localStorage.setItem('currentIndex','0');
             for(let i = 0;i<res.data.length;i++)
             {
               list.songsName=res.data[i].songsName;//需要修改
@@ -111,7 +111,7 @@
               list.songsTime=res.data[i].songsTime;
               this.playlistTableData.push(list);
             }
-            window.localStorage.setItem('curruntPlayList',this.playlistTableData)
+            window.localStorage.setItem('currentPlayList',JSON.stringify(this.playlistTableData));
           })
           .catch(err => {
             console.log(err);
@@ -119,7 +119,7 @@
       }
       else{
         this.playlistTableData=[];
-        for(let i=window.localStorage.getItem('curruntIndex');i<playlist.length;i++)
+        for(let i=window.localStorage.getItem('currentIndex');i<playlist.length;i++)
           this.playlistTableData.push(playlist[i]);
       }
     }

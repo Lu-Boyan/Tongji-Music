@@ -57,9 +57,9 @@ export default{
   methods:{
     playSong()
     {
-      let songsId=window.localStorage.getItem('curruntSongsId');
+      let songsId=window.localStorage.getItem('currentSongsId');
       if(songsId){
-        this.$http.get('http://localhost:3000//song/url?id='+songsId)
+        this.$http.get('http://localhost:3000/song/url?id='+songsId)
           .then(res =>{
             console.log(res.data);
             this.$refs.audio.src=res.data.url;
@@ -72,44 +72,44 @@ export default{
     },
     nextSong()
     {
-      let playlist=window.localStorage.getItem('curruntPlayList');
-      let index=window.localStorage.getItem("curruntIndex");
+      let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+      let index=window.localStorage.getItem("currentIndex");
       index++;
       if(index==playlist.length)
         index=0;
-      window.localStorage.setItem("curruntIndex",index);
-      window.localStorage.setItem("curruntIndex",playlist[index].songsId);
+      window.localStorage.setItem("currentIndex",index);
+      window.localStorage.setItem("currentIndex",playlist[index].songsId);
     },
     lastSong()
     {
-      let playlist=window.localStorage.getItem('curruntPlayList');
-      let index=window.localStorage.getItem("curruntIndex");
+      let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+      let index=window.localStorage.getItem("currentIndex");
       index--;
       if(index==-1)
         index=playlist.length-1;
-      window.localStorage.setItem("curruntIndex",index);
-      window.localStorage.setItem("curruntIndex",playlist[index].songsId);
+      window.localStorage.setItem("currentIndex",index);
+      window.localStorage.setItem("currentIndex",playlist[index].songsId);
     }
   },
   mounted() {
     const that=this;
     //监听缓存中指定key的值变化
     window.addEventListener('storage', function (e) {
-      if(e.key && e.key == 'curruntSongsId' && e.newValue){
+      if(e.key && e.key == 'currentSongsId' && e.newValue){
         that.playSong();
       }
     })
-    let Id;
-    if(window.localStorage.getItem("curruntIndex")==null){
-      window.localStorage.setItem("curruntIndex",0);
+    let songsListId;
+    if(window.localStorage.getItem("currentIndex")==null){
+      window.localStorage.setItem("currentIndex",'0');
     }
-    if(Id=window.localStorage.getItem("curruntSongsId")==null){
-      window.localStorage.setItem("curruntIndex",1);
-      Id=1;
+    if(songsListId=window.localStorage.getItem("currentSongsId")==null){
+      window.localStorage.setItem("currentIndex",'1');
+      songsListId=1;
     }
-    let playlist=window.localStorage.getItem('curruntPlayList');
+    let playlist=window.localStorage.getItem('currentPlayList');
     if(playlist){
-      this.$http.get('http://localhost:3000//song/url?id='+playlist[Id].songsId)
+      this.$http.get('http://localhost:3000/song/url?id='+playlist[songsListId].songsId)
         .then(res =>{
           console.log(res.data);
           this.$refs.audio.src=res.data.url;

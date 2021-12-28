@@ -44,6 +44,29 @@ export default{
     tjmMusiclist,
     mainPage,
     tjmFooter,
+  },
+  mounted:function () {   //自动触发写入的函数
+    let id=JSON.parse(window.localStorage.getItem("userToken")).userId;
+    this.$http.get('http://localhost:8082/api/songslist/get/'+id)
+      .then(res =>{//获取创建的歌单
+        console.log(res.data);
+        if(window.localStorage.getItem("selectedSongslistId")==null&&res.data.length>0){
+          let t=res.data[0].songsListId;
+          window.localStorage.setItem("selectedSongslistId",t);
+          window.localStorage.setItem('defaultPlaylist',t);
+          this.$http.get('http://localhost:8082/api/listcollect/get_list/'+t)
+            .then(res =>{
+              console.log(res.data);
+              window.localStorage.setItem("currentSongsId",res.data[0].songsId);
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 }
 </script>
