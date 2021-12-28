@@ -52,15 +52,21 @@
     <el-form ref="form" :model="form" label-width="120px">
         <el-form-item style="margin-left:-120px; width:100%">
           <el-input v-model="form.momentContent" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
-        </el-form-item>
+        </el-form-item>    
     </el-form>
 
     <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="dialogVisible = true">添加歌曲</el-button>
         <el-button size="mini" @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" size="mini" @click="onSubmit">分享</el-button>
       </div>
   </el-dialog>
 
+  <el-dialog :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
+        <el-input v-model="search" suffix-icon="el-icon-search" placeholder="搜索" @input="change($event)"
+                  @keyup.enter.native="searchHandler"></el-input>
+        <!-- 此处搜索歌曲入库，逻辑同主页search，返回歌曲id以备发布动态 -->
+  </el-dialog>
   </div>
 </div>
 </template>
@@ -87,6 +93,7 @@ import axios from 'axios'
     data() {
       return {
         dialogFormVisible: false,
+        dialogVisible:false,
         theactivities:[],
         form: {
           userId:0,
@@ -94,7 +101,9 @@ import axios from 'axios'
           momentTime:'',
           songs_id:null,
         },
+        search:'',
         code:[{}],
+        state: '',
         i:0,
         activities: [
           // {
@@ -117,7 +126,7 @@ import axios from 'axios'
       this.gettheCommunity();
       var test=localStorage.getItem('userToken')
       test=JSON.parse(test)  
-      this.userId=test.userId
+      this.userId=test.userId;
           },
     methods: {
       onSubmit() {
@@ -125,6 +134,46 @@ import axios from 'axios'
         alert("分享成功"); 
         this.dialogFormVisible=false;
         this.posttheCommunity();
+      },
+      handeleSelect(){
+
+      },
+      searchHandler(){
+          this.$http.get('http://localhost:3000/search?keywords='+this.search)
+          .then(res =>{
+            // 清空表格
+            // this.searchTableData.splice(0,this.searchTableData.length);
+            console.log(res);
+
+            // let obj = {
+            //   songsId:'',
+            //   songsName:'',
+            //   songsArtistsName:'',
+            //   songsTime:'',
+            //   songsImage:'',
+            // };
+
+            // for(let i=0;i<res.data.result.songs.length;i++){
+            //   obj.songsId=res.data.result.songs[i].id;
+            //   obj.songsName=res.data.result.songs[i].name;
+            //   obj.songsArtistsName=res.data.result.songs[i].artists.name;
+            //   let mt=Math.trunc(res.data.result.songs[i].duration/60000);
+            //   let st=(res.data.result.songs[i].duration/1000)-mt*60;
+            //   obj.songsTime=mt+':'+st;
+            //   obj.songsImage=res.data.result.songs[i].album.img1v1Url;
+            //   //push进this.tableData中
+            //   this.searchTableData.push(obj);
+            // }
+            // console.log(this.searchTableData);
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      },
+      change(e){
+        this.$forceUpdate();
+        this.search=e;
+        console.log(this.search)
       },
       del(themomentId){
         axios.delete('http://localhost:8910/community/delete_community',{
