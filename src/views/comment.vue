@@ -1,155 +1,201 @@
 <template>
 
-<div class="table">
+  <div class="table">
 
     <el-row class="demo-autocomplete">
-        <el-input
-  type="textarea"
-  :autosize="{ minRows: 3, maxRows: 6}"
-  placeholder="请输入内容"
-  v-model="contentData" circle style="margin-top:10px !important;">
-</el-input>
-    <el-button icon="el-icon-upload2" circle style="margin-top:10px !important;" @click.native.prevent="addData()"></el-button>
+      <el-input
+        type="textarea"
+        :autosize="{ minRows: 3, maxRows: 6}"
+        placeholder="请输入内容"
+        v-model="contentData" circle style="margin-top:10px !important;">
+      </el-input>
+      <el-button icon="el-icon-upload2" circle style="margin-top:10px !important;" @click.native.prevent="addData()"></el-button>
     </el-row>
-  <el-table
-    :data="commentTableData"
-    height="300"
-    style="width: 100%; background-color:unset;"
-    resizable=“false”>
-    <el-table-column
-      fixed="left"
-      prop="userId"
-      align= "left"
-      resizable=“false”
-      style="color:#DDDD22 !important">
-    </el-table-column>
-    <el-table-column
-      fixed="left"
-      prop="commentContent"
-      min-width="180%"
-      align= "left"
-      resizable=“false”
-      style="color:#DDDD22 !important">
-    </el-table-column>
-    <el-table-column
-      fixed="left"
-      prop="commentTime"
-      align= "left"
-      resizable=“false”
-      style="color:#DDDD22 !important">
-    </el-table-column>
-    <el-table-column
-      fixed="left"
-      prop="thumbNum"
-      align= "left"
-      resizable=“false”
-      style="color:#DDDD22 !important">
-    </el-table-column>
-    <el-table-column
-    prop="thumbNum"
-      fixed="right"
-      align= "right"
-      resizable=“false”
-      style="color:#DDDD22 !important">
+    <el-table
+      :data="commentTableData"
+      height="300"
+      style="width: 100%; background-color:unset;"
+      resizable=“false”>
+      <el-table-column
+        fixed="left"
+        prop="userName"
+        align= "left"
+        resizable=“false”
+        style="color:#DDDD22 !important">
+      </el-table-column>
+      <el-table-column
+        fixed="left"
+        prop="commentContent"
+        min-width="180%"
+        align= "left"
+        resizable=“false”
+        style="color:#DDDD22 !important">
+      </el-table-column>
+      <el-table-column
+        fixed="left"
+        prop="commentTime"
+        align= "left"
+        resizable=“false”
+        style="color:#DDDD22 !important">
+      </el-table-column>
+      <el-table-column
+        fixed="left"
+        prop="thumbNum"
+        align= "left"
+        resizable=“false”
+        style="color:#DDDD22 !important">
+      </el-table-column>
+      <el-table-column
+        prop="thumbNum"
+        fixed="right"
+        align= "right"
+        resizable=“false”
+        style="color:#DDDD22 !important">
 
-      <template slot-scope="scope">
-        <el-button
-          @click.native.prevent="play($event,scope.$index, tableData)"
-          class="el-icon-thumb"
-          size="small"
-          circle/>
-        <el-button
-          @click.native.prevent="deleteRow(scope.$index, tableData)"
-          class="el-icon-close"
+        <template slot-scope="scope">
+          <el-button
+            @click.native.prevent="play($event,scope.$index, commentTableData)"
+            class="el-icon-thumb"
+            v-bind:class="{inred:commentTableData[scope.$index].like}"
+            style="border:unset"
 
-          size="small"
-          circle/>
-      </template>
-    </el-table-column>
-  </el-table>
-</div>
+            size="small"
+            circle/>
+          <el-button
+            @click.native.prevent="deleteRow(scope.$index, commentTableData)"
+            class="el-icon-close"
+            size="small"
+            circle/>
+        </template>
+      </el-table-column>
+    </el-table>
+  </div>
 </template>
 
 
 <script>
 import $ from 'jquery'
-  export default {
-    data() {
+export default {
+  data() {
 
-      return {
+    return {
+      UId:'',
+      commentTableData: [],
+      contentData : '',
+      SId:''
 
-        commentTableData: [],
-        contentData : ''
-
-      }
+    }
+  },
+  methods: {
+    bindId:function(i){
+      return "thumb"+i;
     },
-    methods: {
-      play(obj,index,rows){
+    play(obj,index,rows){
 
 
 
-       console.log($(obj.target))
-        $(obj.target).css("background-color", "red");
-        //console.log(this.commentTableData[index]);
-        if(this.commentTableData[index].like==false)
-        {
-          this.commentTableData[index].thumbNum++;
-          this.commentTableData[index].like=true;
-        }
-        //console.log(rows)
+      console.log($(obj.target))
+      var CId = this.commentTableData[index].commentId;
+
+      if(this.commentTableData[index].like==false)
+      {
+
+        console.log(CId)
+        this.commentTableData[index].thumbNum++;
+        $(obj.target).css("background-color", "indianred");
+        this.commentTableData[index].like=true;
 
 
-      },
-      deleteRow(index, rows) {
+        this.$http.get('http://localhost:8902/comment/add_thumb/'+this.UId+'/'+CId)
+          .then(res => {
+            console.log(res.data);
+
+          })
+
+      }else
+      {
+        $(obj.target).css("background-color","white")
+        this.commentTableData[index].like=false;
+        this.commentTableData[index].thumbNum--;
+        this.$http.get('http://localhost:8902/comment/delete_thumb/'+this.UId+'/'+CId)
+          .then(res => {
+            console.log(res.data);
+          })
+      }
+      //console.log(rows)
+
+    },
+    deleteRow(index, rows) {
+      //var UId  = JSON.parse(window.localStorage.getItem("userToken")).userId;
+
+
+      if(this.UId==this.commentTableData[index].userId)
+      {
+
+
+        this.$http.get('http://localhost:8902/comment/delete_comment_by_Id/'+this.commentTableData[index].commentId)
+          .then(res => {
+            console.log(res.data);
+          })
         rows.splice(index, 1);
-      },
-      getData(){
-        console.log('@');
-        this.$http.get('http://localhost:8902/comment/get_comment_by_songsId/2')
-        .then(res => {
-        console.log(res.data);
-        this.commentTableData.splice(1,this.commentTableData.length-1)
-        for(var i = 0;i<res.data.length;i++)
-        {
-          this.commentTableData.push(res.data[i])
-          console.log(this)
-        }
-        })
-      },
-      addData(){
-        var url = 'http://localhost:8902/comment/add_comment/2/2/';
-        url = url + this.contentData;
-        console.log(url);
-         this.$http.get(url)
-        .then(res => {
-        })
-
-        this.getData();
-
-
-
       }
 
     },
+    getData(){
+      console.log('@');
+      this.SId = window.localStorage.getItem('curruntSongsId');
 
-    mounted:function () {   //自动触发写入的函数
-            this.getData();
-        }
+      this.commentTableData.splice(0,this.commentTableData.length)
+      this.$http.get('http://localhost:8902/comment/get_comment_by_songsId/'+this.SId+'/')
+        .then(res => {
+          console.log(res.data);
+          for(var i = 0;i<res.data.length;i++)
+          {
+            this.commentTableData.push(res.data[i])
+            console.log(this)
+          }
+        })
+    },
+    addData(){
+      var url = 'http://localhost:8902/comment/add_comment/'+this.SId+'/'+this.UId;
+      url = url + this.contentData;
+      console.log(url);
+      this.$http.get(url)
+        .then(res => {
+        })
+
+
+      let _this=this
+      setTimeout(function()  {
+
+        _this.getData()
+
+      }, 1000);
+
+
+    }
+
+  },
+
+  mounted:function () {   //自动触发写入的函数
+    this.UId = JSON.parse(window.localStorage.getItem("userToken")).userId;
+    this.getData();
   }
+}
 
 
 </script>
 <style>
 .el-table,
-        .el-table__expanded-cell {
-            background-color: transparent !important;
-        }
-        /* 表格内背景颜色 */
-        .el-table th,
-        .el-table tr,
-        .el-table td {
-            background-color: transparent !important;
-        }
+.el-table__expanded-cell {
+  background-color: transparent !important;
+}
+/* 表格内背景颜色 */
+.el-table th,
+.el-table tr,
+.el-table td {
+  background-color: transparent !important;
+}
 .el-table {
   /* 表格字体颜色 */
   color: #DDDD22;
@@ -164,7 +210,13 @@ import $ from 'jquery'
   height: 0px;
 }
 .el-table thead {
-		color: #FAFAE2;
-		font-weight: 500;
-	}
+  color: #FAFAE2;
+  font-weight: 500;
+}
+
+.inred{
+  background-color: indianred;
+
+}
+
 </style>
