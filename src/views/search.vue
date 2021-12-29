@@ -1,5 +1,22 @@
 <template>
 <div class="playlist">
+  <el-dialog title="添加歌曲到歌单" :visible.sync="dialogFormVisible">
+    <el-form>
+      <el-form-item label="选择歌单" label-width="120px">
+        <el-select v-model="value" placeholder="请选择">
+          <el-option
+            v-for="item in options"
+            :label="item.songsListName"
+            :value="item.songsListId">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click.native="dialogFormVisible = false">取 消</el-button>
+      <el-button type="primary" @click.native="addSongsToList">确 定</el-button>
+    </div>
+  </el-dialog>
     <el-row class="demo-autocomplete">
         <el-col :span="12" style="width: 400px !important;">
         <el-autocomplete
@@ -21,7 +38,7 @@
             <el-table-column
             prop="songsName"
             label="歌名"
-            width="300"
+            width="350"
             resizable=“false”>
             </el-table-column>
             <el-table-column
@@ -38,33 +55,17 @@
             align= "center"
             resizable=“false”>
             </el-table-column>
-            <el-table-column>
+            <el-table-column
+              align= "center">
               <template slot-scope="scope">
                 <el-dropdown>
                   <span class="el-dropdown-link">
                     <i class="el-icon-more"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click="playthis(scope.$index)">播放</el-dropdown-item>
-                    <el-dropdown-item @click="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
-                    <el-dropdown-item type="text" @click="dialogFormVisible = true">添加到歌单</el-dropdown-item>
-                    <el-dialog title="添加歌曲到歌单" :visible.sync="dialogFormVisible">
-                      <el-form :model="form">
-                        <el-form-item label="选择歌单">
-                          <el-select v-model="value" placeholder="请选择">
-                            <el-option
-                              v-for="item in options"
-                              :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-form>
-                      <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="addSongsToList(scope.$index)">确 定</el-button>
-                      </div>
-                    </el-dialog>
+                    <el-dropdown-item @click.native="playthis(scope.$index)">播放</el-dropdown-item>
+                    <el-dropdown-item @click.native="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
+                    <el-dropdown-item @click.native="select(scope.$index)">添加到歌单</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
@@ -91,6 +92,7 @@
         value:'',
         state: '',
         dialogFormVisible: false,
+        selectIndex:'',
       }
     },
     methods: {
@@ -123,23 +125,25 @@
           })
       },
       playthis(index){
-        alert("hhhh")
+        console.log(window.localStorage.getItem('currentSongsId'));
         window.localStorage.setItem('currentSongsId',this.searchTableData[index].songsId);//播放这首歌
+        console.log(window.localStorage.getItem('currentSongsId'));
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
-        playlist.splice(ii+index,1);//删除这首歌
         if(ii==0){//添加到currentIndex指的位置
           playlist.unshift(this.searchTableData[index]);
         }
         else{
-          playlist.splice(ii-1,0,this.searchTableData[index]);
+          playlist.splice(ii,0,this.searchTableData[index]);
         }
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-        this.$http.post('http://localhost:8082/api/music/add?songsId='+this.searchTableData[index].songsId
-          +"&songsName="+this.searchTableData[index].songsName
-          +"&songsArtistsName="+this.searchTableData[index].songsArtistsName
-          +"&songsImage="+this.searchTableData[index].songsImage
-          +"&songsTime="+this.searchTableData[index].songsTime)
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
+          "songsId": this.searchTableData[index].songsId,
+          "songsName": this.searchTableData[index].songsName,
+          "songsArtistsName": this.searchTableData[index].songsArtistsName,
+          "songsImage": this.searchTableData[index].songsImage,
+          "songsTime": this.searchTableData[index].songsTime,
+        })
           .then(res =>{
             console.log(this.searchTableData);
           })
@@ -149,70 +153,77 @@
       },
       addNextPlay(index){
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
+        console.log(playlist);
         let ii=window.localStorage.getItem('currentIndex');
-        if(ii+index!=0){
-          playlist.splice(ii+index,1);//删除这首歌
-          playlist.splice(ii,0,this.searchTableData[index]);
-          window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-        }
-        this.$http.post('http://localhost:8082/api/music/add?songsId='+this.searchTableData[index].songsId
-          +"&songsName="+this.searchTableData[index].songsName
-          +"&songsArtistsName="+this.searchTableData[index].songsArtistsName
-          +"&songsImage="+this.searchTableData[index].songsImage
-          +"&songsTime="+this.searchTableData[index].songsTime)
+        playlist.splice(ii+1,0,this.searchTableData[index]);
+        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
+        console.log(playlist);
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
+          "songsId": this.searchTableData[index].songsId,
+          "songsName": this.searchTableData[index].songsName,
+          "songsArtistsName": this.searchTableData[index].songsArtistsName,
+          "songsImage": this.searchTableData[index].songsImage,
+          "songsTime": this.searchTableData[index].songsTime,
+        })
           .then(res =>{
             console.log(this.searchTableData);
           })
           .catch(err => {
             console.log(err);
           })
+      },
+      select(index){
+        this.selectIndex=index;
+        this.dialogFormVisible=true;
       },
       handleSearch() {
         this.$http.get('http://47.101.183.170:3000/search?keywords='+this.state)
           .then(res =>{
             //清空表格
             this.searchTableData.splice(0,this.searchTableData.length);
-            console.log(res);
-
-            let obj = {
-              songsId:'',
-              songsName:'',
-              songsArtistsName:'',
-              songsTime:'',
-              songsImage:'',
-            };
+            console.log(res.data.result.songs);
             for(let i=0;i<res.data.result.songs.length;i++){
-              obj.songsId=res.data.result.songs[i].id;
-              obj.songsName=res.data.result.songs[i].name;
-              obj.songsArtistsName=res.data.result.songs[i].artists.name;
               let mt=Math.trunc(res.data.result.songs[i].duration/60000);
-              let st=(res.data.result.songs[i].duration/1000)-mt*60;
-              obj.songsTime=mt+':'+st;
-              obj.songsImage=res.data.result.songs[i].album.img1v1Url;
-              //push进this.tableData中
-              this.searchTableData.push(obj);
+              if(mt<10)
+                mt="0"+mt.toString();
+              let st=Math.trunc(res.data.result.songs[i].duration/1000)-mt*60;
+              if(st<10)
+                st="0"+st.toString();
+              this.searchTableData.push({
+                songsId:res.data.result.songs[i].id,
+                songsName:res.data.result.songs[i].name,
+                songsArtistsName:res.data.result.songs[i].artists[0].name,
+                songsTime:mt+':'+st,
+                songsImage:res.data.result.songs[i].album.img1v1Url,
+              })
             }
-            console.log(this.searchTableData);
           })
           .catch(err => {
             console.log(err);
           })
       },
-      addSongsToList(index){
+      addSongsToList(){
         this.dialogFormVisible = false;
-        this.$http.post('http://localhost:8082/api/music/add?songsId='+this.searchTableData[index].songsId
-          +"&songsName="+this.searchTableData[index].songsName
-          +"&songsArtistsName="+this.searchTableData[index].songsArtistsName
-          +"&songsImage="+this.searchTableData[index].songsImage
-          +"&songsTime="+this.searchTableData[index].songsTime)
+        let index=this.selectIndex;
+        console.log(this.searchTableData[index]);
+
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
+            "songsId": this.searchTableData[index].songsId,
+            "songsName": this.searchTableData[index].songsName,
+            "songsArtistsName": this.searchTableData[index].songsArtistsName,
+            "songsImage": this.searchTableData[index].songsImage,
+            "songsTime": this.searchTableData[index].songsTime,
+          })
           .then(res =>{
             console.log(this.searchTableData);
           })
           .catch(err => {
             console.log(err);
           });
-        this.$http.post('http://localhost:8082/api/songs/add?songsListId='+this.value.songlistId
-          +'&songsId='+this.searchTableData[index].songsId)
+        this.$http.post('http://localhost:8082/api/songs/add', {
+          "songsListId":this.value,
+          "songsId":this.searchTableData[index].songsId
+        })
           .then(res =>{
             //清空表格
             this.$alert('该歌曲成功添加至歌单！', '消息通知', {
@@ -242,12 +253,9 @@
 
     mounted() {
       this.loadAll();
-      let obj={};
       let table=JSON.parse(window.localStorage.getItem("mySongslist"));
       for(let i=0;i<table.length;i++){
-        obj.value=table.songslistId;
-        obj.label=table.songslistName;
-        this.options.push(obj);
+        this.options.push(table[i]);
       }
     }
   }

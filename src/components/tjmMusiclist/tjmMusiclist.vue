@@ -206,7 +206,6 @@
             songsListName:'',
             songsListId:''
           }
-          alert(res.data[0].songsListName);
           for(let i = 0;i<res.data.length;i++)
           {
             this.createListTableData.push(res.data[i]);//需要修改

@@ -50,11 +50,11 @@ export default{
     this.$http.get('http://localhost:8082/api/songslist/get/'+id)
       .then(res =>{//获取创建的歌单
         console.log(res.data);
-        if(window.localStorage.getItem("selectedSongslistId")==null&&res.data.length>0){
+        if(res.data.length>0){
           let t=res.data[0].songsListId;
           window.localStorage.setItem("selectedSongslistId",t);
           window.localStorage.setItem('defaultPlaylist',t);
-          this.$http.get('http://localhost:8082/api/listcollect/get_list/'+t)
+          this.$http.get('http://localhost:8082/api/songs/get_songs/'+t)
             .then(res =>{
               console.log(res.data);
               window.localStorage.setItem("currentSongsId",res.data[0].songsId);

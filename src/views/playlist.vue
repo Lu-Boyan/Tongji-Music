@@ -38,9 +38,9 @@
                       <i class="el-icon-more"></i>
                   </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item><label @click="playthis(scope.$index)" >播放</label></el-dropdown-item>
-                      <el-dropdown-item><label @click="addNextPlay(scope.$index)" >添加到下一首播放</label></el-dropdown-item>
-                      <el-dropdown-item><label @click="remove(scope.$index)" >从播放列表删除</label></el-dropdown-item>
+                      <el-dropdown-item @click.native="playthis(scope.$index)">播放</el-dropdown-item>
+                      <el-dropdown-item @click.native="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
+                      <el-dropdown-item @click.native="remove(scope.$index)">从播放列表删除</el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </template>
@@ -89,27 +89,17 @@
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       }
     },
-    beforeMount() {
-        this.playlistId=window.localStorage.getItem('defaultPlaylist');
-    },
     mounted:function () {//自动触发写入的函数
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      if(playlist==null){
-        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.playlistId)
+      if(playlist.length<1){
+        let t=window.localStorage.getItem('defaultPlaylist');
+        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+t)
         .then(res =>{
             console.log(res);
-            let list={
-              songsName:'',
-              songsArtistsName:'',
-              songsTime:''
-            };
             window.localStorage.setItem('currentIndex','0');
             for(let i = 0;i<res.data.length;i++)
             {
-              list.songsName=res.data[i].songsName;//需要修改
-              list.songsArtistsName=res.data[i].songsArtistsName;
-              list.songsTime=res.data[i].songsTime;
-              this.playlistTableData.push(list);
+              this.playlistTableData.push(res.data[i]);
             }
             window.localStorage.setItem('currentPlayList',JSON.stringify(this.playlistTableData));
           })

@@ -38,9 +38,9 @@
               <i class="el-icon-more"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click="playthis(scope.$index)">播放</el-dropdown-item>
-              <el-dropdown-item @click="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
-              <el-dropdown-item @click="deleteMusic(scope.$index)">从歌单删除</el-dropdown-item>
+              <el-dropdown-item @click.native="playthis(scope.$index)">播放</el-dropdown-item>
+              <el-dropdown-item @click.native="addNextPlay(scope.$index)">添加到下一首播放</el-dropdown-item>
+              <el-dropdown-item @click.native="deleteMusic(scope.$index)">从歌单删除</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -85,7 +85,7 @@ export default {
     deleteMusic(index) {
       if(window.localStorage.getItem("modifiable")=='1'){
       this.$http.delete('http://localhost:8082/api/songs/delete?'
-        + 'songslistId='+this.selectedSongslistId
+        +'songslistId='+this.selectedSongslistId
         +'songsId'+rows[index].songsId)
         .then(res =>{
           console.log(res);
@@ -113,15 +113,16 @@ export default {
       }
     },
     playthis(index){
+      console.log(window.localStorage.getItem('currentSongsId'));
       window.localStorage.setItem('currentSongsId',this.songsTableData[index].songsId);//播放这首歌
+      console.log(window.localStorage.getItem('currentSongsId'));
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       let ii=window.localStorage.getItem('currentIndex');
-      playlist.splice(ii+index,1);//删除这首歌
       if(ii==0){//添加到currentIndex指的位置
         playlist.unshift(this.songsTableData[index]);
       }
       else{
-        playlist.splice(ii-1,0,this.songsTableData[index]);
+        playlist.splice(ii,0,this.songsTableData[index]);
       }
       window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
     },
@@ -137,11 +138,11 @@ export default {
   },
   mounted:function () {//自动触发写入的函数
     this.selectedSongslistId=window.localStorage.getItem("selectedSongslistId");
-    this.$http.get('http://localhost:8082/api/listcollect/get_list/'+this.selectedSongslistId)
+    this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.selectedSongslistId)
       .then(res =>{
         console.log(res.data);
         this.songsTableData.splice(0,this.songsTableData.length);
-        for(var i = 0;i<res.data.length;i++)
+        for(let i = 0;i<res.data.length;i++)
         {
           this.songsTableData.push(res.data[i]);//需要修改
           console.log(this);

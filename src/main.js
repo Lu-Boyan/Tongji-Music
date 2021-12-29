@@ -7,7 +7,9 @@ import VueParticles from 'vue-particles'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
+import updateLocalStorage from "./components/updateLocalStorage/updateLocalStorage";
 
+Vue.use(updateLocalStorage);
 //配置请求根路径
 Vue.prototype.$http=axios
 

@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import updateLocalStorage from '../updateLocalStorage/updateLocalStorage'
 import tjmProcess from '../tjmProcessBar/tjmProcessBar.vue'
 export default{
   components:{
@@ -56,11 +57,10 @@ export default{
     }
   },
   methods:{
-    playSong()
+    playSong(newId)
     {
-      let songsId=window.localStorage.getItem('currentSongsId');
-      if(songsId){
-        this.$http.get('http://47.101.183.170:3000/song/url?id='+songsId)
+      if(newId){
+        this.$http.get('http://47.101.183.170:3000/song/url?id='+newId)
           .then(res =>{
             this.songsSrc=res.data.data[0].url;
             this.$refs.audio.play();
@@ -96,18 +96,20 @@ export default{
   mounted() {
     const that=this;
     //监听缓存中指定key的值变化
-    window.addEventListener('storage', function (e) {
-      if(e.key && e.key == 'currentSongsId' && e.newValue){
-        that.playSong();
+    window.addEventListener("setItemEvent",function(e){
+      //e.key : 是值发生变化的key
+      //例如 e.key==="token";
+      //e.newValue : 是可以对应的新值
+      if(e.key==="currentSongsId"){
+        that.playSong(e.newValue);
       }
     })
-    let songsListId;
+
     if(window.localStorage.getItem("currentIndex")==null){
       window.localStorage.setItem("currentIndex",'0');
     }
-    if(songsListId=window.localStorage.getItem("currentSongsId")==null){
+    if(window.localStorage.getItem("currentSongsId")==null){
       window.localStorage.setItem("currentSongsId",'347230');
-      songsListId=347230;
     }
     let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
     if(playlist){
