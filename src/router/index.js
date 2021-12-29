@@ -8,10 +8,11 @@ import mainPage from '../views/mainPage.vue'
 import playlist from '../views/playlist.vue'
 import search from '../views/search.vue'
 import recommend from '../views/recommend.vue'
-import comment from '../views/comment.vue'
 import main from '../views/main.vue'
 import community from '../views/community.vue'
-import songslist from "../views/songslist";
+import list from '../components/songslist/list.vue'
+import modify from '../components/modifyme.vue'
+import other from '../components/other.vue'
 Vue.use(Router)
 
 
@@ -24,25 +25,13 @@ export default new Router({
         {
             path: '/login',
             name: 'login',
-            component: login,
-            meta: {requireAuth: false}
+            component: login
         },
         {
             path: '/tjmusic',
             component: main,
             redirect: '/tjmusic/mainPage',
-            meta: {requireAuth: true },
-            beforeEnter: function(to, from, next) {
-            if (localStorage.getItem("userToken")) {
-              next();
-            }
-            else {
-              alert("请先登录");
-              next("/login");
-            }
-          },
-            children:[
-                {
+            children: [{
                     path: '/tjmusic/mainPage',
                     //component: () => import('../views/mainPage.vue'),
                     redirect: '/tjmusic/mainPage/playlist',
@@ -56,14 +45,6 @@ export default new Router({
                             }
                         },
                         {
-                            path: '/tjmusic/mainPage/songslist', // 歌单列表
-                            //component: () => import('../views/playlist.vue'),
-                            component: songslist,
-                            meta: {
-                              keepAlive: true
-                            }
-                        },
-                        {
                             path: '/tjmusic/mainPage/search', // 搜索列表
                             //component: () => import('../views/search.vue'),
                             component: search,
@@ -72,22 +53,13 @@ export default new Router({
                             }
                         },
                         {
-                            path: '/tjmusic/mainPage/recommend', // 推荐列表
+                            path: '/tjmusic/mainPage/recommend', // 搜索列表
                             //component: () => import('../views/recommend.vue'),
                             component: recommend,
                             meta: {
                                 keepAlive: true
                             }
-                        },
-                        {
-                            path: '/tjmusic/mainPage/comment', // 评论列表
-                            //component: () => import('../views/recommend.vue'),
-                            component: comment,
-                            meta: {
-                                keepAlive: true
-                            }
                         }
-
                     ]
                 },
                 {
@@ -101,12 +73,23 @@ export default new Router({
                     component: me
                 },
                 {
-                    path: '/tjmusic/personal/like',
+                    path: '/tjmusic/personal/other/:id',
+                    //component: () => import('../views/mainPage.vue'),
+                    component: other
+                },
+                {
+                    path: '/tjmusic/personal/me/modify',
+                    //component: () => import('../views/mainPage.vue'),
+                    component: modify
+                },
+
+                {
+                    path: '/tjmusic/personal/like/:id',
                     //component: () => import('../views/mainPage.vue'),
                     component: like
                 },
                 {
-                    path: '/tjmusic/personal/fans',
+                    path: '/tjmusic/personal/fans/:id',
                     //component: () => import('../views/mainPage.vue'),
                     component: fans
                 },
@@ -114,6 +97,11 @@ export default new Router({
                     path: '/tjmusic/community',
                     //component: () => import('../views/mainPage.vue'),
                     component: community
+                },
+                {
+                    path: '/tjmusic/personal/lists/:id',
+                    //component: () => import('../views/mainPage.vue'),
+                    component: list
                 },
             ]
         }
