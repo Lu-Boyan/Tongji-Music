@@ -27,8 +27,8 @@
     </el-row>
     <router-view/>
     </el-aside>
-    <el-main width="33%">
-      <tjmSongWords/>
+    <el-main width="33%" style="z-index:999">
+      <tjmSongWords style="z-index:999"/>
     </el-main>
     </el-container>
   </el-main>
