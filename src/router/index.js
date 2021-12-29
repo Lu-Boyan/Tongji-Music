@@ -10,7 +10,6 @@ import search from '../views/search.vue'
 import recommend from '../views/recommend.vue'
 import main from '../views/main.vue'
 import community from '../views/community.vue'
-import list from '../components/songslist/list.vue'
 import modify from '../components/modifyme.vue'
 import other from '../components/other.vue'
 Vue.use(Router)
@@ -98,11 +97,7 @@ export default new Router({
                     //component: () => import('../views/mainPage.vue'),
                     component: community
                 },
-                {
-                    path: '/tjmusic/personal/lists/:id',
-                    //component: () => import('../views/mainPage.vue'),
-                    component: list
-                },
+
             ]
         }
     ]
