@@ -11,8 +11,9 @@
       <el-row style="height:40px">
         <el-col :span="12" ><h2 id="username" >{{this.name}}</h2></el-col>
         <el-col :span="12">
-          <!-- <el-button @click="change()" style="width:200px;height:40px">编辑个人资料</el-button> -->
-          <router-link to="/tjmusic/personal/me/modify">编辑个人资料</router-link>
+          <el-button v-if="this.on==0" @click="follow()" style="width:200px;height:40px">{{this.foll[this.on]}}</el-button>
+          
+          <el-button v-if="this.on!=0" @click="delete1()" style="width:200px;height:40px">{{this.foll[this.on]}}</el-button>
           </el-col>
         
       </el-row>
@@ -55,11 +56,11 @@
 
     
     <el-container>
-      <el-header>我创建的歌单（{{this.songslist.length}}）</el-header>
+      <el-header>{{this.name}}创建的歌单（{{this.songslist.length}}）</el-header>
       <el-main>
 
        <va-card 
-            v-for="(songslis, index) in this.songslist"
+            v-for="(songslist, index) in this.songslist"
             :key="index"
             color="#b5c4b1" 
             gradient
@@ -70,7 +71,9 @@
            <div class="photo">
             <el-row id="p1"><img src="https://pic1.zhimg.com/v2-4fc5ca746aa56334ad772504557907d1_r.jpg?source=1940ef5c" width="150" height="150"></el-row>
             <el-row>
-                <router-link :to="'/tjmusic/personal/lists/'+songslis.songsListId">{{listname[index]}}</router-link>
+              <!-- <h4 @click="tolist()">{{listname[index]}}</h4> -->
+                <!-- <el-button type="primary" plain round size="medium" @click="tolist()">{{listname[index]}}</el-button> -->
+                <router-link to="/tjmusic/personal/lists">{{listname[index]}}</router-link>
             </el-row>
             </div></el-col>
                 
@@ -94,6 +97,8 @@ export default {
  data () {
     return {
       showAvatar: false,
+      visible4:false,
+      on:0,
       id: '',
       name: '',
       age: '',
@@ -102,15 +107,16 @@ export default {
       fans:[],
       focus:[],
       songslist:[],
-      listname:[]
+      listname:[],
+      foll:["关注","取消关注"]
     }
   },
    mounted () {
      //通过登录获得id
     //this.id = localStorage.getItem("userId")
-    //用上面的替换下面这一行（other里141行+方法里）
-    //this.id=1window.localStorage
-    this.id =localStorage.getItem("userId")
+    //用上面的替换下面这一行
+    this.id=this.$route.params.id
+    
     fetch("http://localhost:8082/api/v1/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
@@ -133,6 +139,11 @@ export default {
         // console.log(res)
         for(var i in res)
         {
+           //通过登录获得id
+    //this.id = localStorage.getItem("userId")
+          this.id =localStorage.getItem("userToken").userId
+    //用上面的替换下面这一行
+    
           this.fans.push(res[i].fansId)
         }
         
@@ -147,6 +158,10 @@ export default {
         console.log(res)
         for(var i in res)
         {
+           if(res[i].focusId==1)
+            {
+                this.on=1
+            }
           this.focus.push(res[i].focusId)
         }
         console.log(this.focus)
@@ -157,9 +172,9 @@ export default {
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
-        //console.log(res)
+        console.log(res)
         this.songslist=res
-        console.log(this.songslist[0].songsListId)
+        
         for(var i in res)
         {
           this.listname.push(res[i].songsListName)
@@ -171,8 +186,54 @@ export default {
     
   },
   methods: {
-    
-    
+    handleClick4() {
+      this.visible4 = true;
+    },
+    follow()
+    {
+        let req = {
+            //通过登录获得id
+    //this.id = localStorage.getItem("userId")
+    //用上面的替换下面这一行（other里141行）
+                focusId: 1,
+                fansId:this.id
+            }
+
+            fetch("http://localhost:8082/api/follow/add", {
+                method: "POST",
+                body: JSON.stringify(req),
+               
+            }).then(response => {
+                console.log(response)
+                let result = response.json()
+                result.then(res => {
+                console.log(res)
+                
+                   alert("关注成功")
+                    location.reload(true)
+                    this.on=1
+                   
+                    
+                })
+            })
+    },
+    delete1()
+    {
+         //通过登录获得id
+    //this.id = localStorage.getItem("userId")
+    //用上面的替换下面这一行（other里141行）
+fetch( "http://localhost:8082/api/follow/remove?focusId=" + 1+"&fansId="+this.id, {
+      method: "DELETE",
+    }).then((res) => {
+      var result = res.json()
+      result.then((res) => {
+          console.log(res)
+          alert("取消关注成功")
+            location.reload(true)
+            this.on=0
+      })
+    })
+    }
   }
 }
 </script>
