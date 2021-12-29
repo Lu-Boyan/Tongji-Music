@@ -102,6 +102,7 @@ export default{
               case "登录成功": {
                 alert("登录成功！");
                 window.localStorage.setItem("userToken", JSON.stringify(res.data));
+                window.localStorage.setItem("userId", self.form.user_id);
                 self.$router.push({path:'/tjmusic/mainPage',
                   query:{userId:res.data.userId,userName:res.data.userName,userEmail:res.data.userEmail,userArea:res.data.userArea,
                     userAge:res.data.userAge,userContent:res.data.userContent}});
