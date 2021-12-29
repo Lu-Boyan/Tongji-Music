@@ -1,6 +1,9 @@
 <template>
 <div class="playlist">
             <el-table
+              v-loading="loading"
+              element-loading-text="拼命加载中"
+              element-loading-spinner="el-icon-loading"
             :data="playlistTableData"
             height="430"
             style="width: 100%; margin-top:10px !important;">
@@ -57,11 +60,13 @@
       return {
         playlistId:0,
         playlistTableData: [],
+        loading:true
       }
     },
     methods:{
       playthis(index){
         window.localStorage.setItem('currentSongsId',this.playlistTableData[index].songsId);//播放这首歌
+        window.localStorage.setItem("currentSongsName",this.playlistTableData[index].songsName);
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
         playlist.splice(ii+index,1);//删除这首歌
@@ -91,27 +96,11 @@
     },
     mounted:function () {//自动触发写入的函数
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      if(playlist.length<1){
-        let t=window.localStorage.getItem('defaultPlaylist');
-        this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+t)
-        .then(res =>{
-            console.log(res);
-            window.localStorage.setItem('currentIndex','0');
-            for(let i = 0;i<res.data.length;i++)
-            {
-              this.playlistTableData.push(res.data[i]);
-            }
-            window.localStorage.setItem('currentPlayList',JSON.stringify(this.playlistTableData));
-          })
-          .catch(err => {
-            console.log(err);
-          })
-      }
-      else{
-        this.playlistTableData=[];
-        for(let i=window.localStorage.getItem('currentIndex');i<playlist.length;i++)
-          this.playlistTableData.push(playlist[i]);
-      }
+      console.log(playlist);
+      this.playlistTableData=[];
+      for(let i=window.localStorage.getItem('currentIndex');i<playlist.length;i++)
+        this.playlistTableData.push(playlist[i]);
+      this.loading=false;
     }
   }
 </script>

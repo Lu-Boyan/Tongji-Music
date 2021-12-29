@@ -1,45 +1,26 @@
 <template>
   <div class="tjmFooter">
-    <el-container>
-      <el-aside width="1200px">
         <el-container>
-
-          <el-aside width="250px">
-
+          <el-aside width="25%">
+            <el-button-group style="margin-left:70%;margin-top:30px !important;">
             <el-button
-              style="margin-top:30px;margin-left:100px !important;"
               class="el-icon-d-arrow-left"
               size="large"
               @click="lastSong()"
               circle/>
-
             <el-button
               class="el-icon-d-arrow-right"
               size="large"
               @click="nextSong()"
               circle/>
+            </el-button-group>
           </el-aside>
           <el-main>
-            <audio ref="audio" :src="songsSrc" style="width:100%; " controls="controls" @ended="nextSong()">
+            <audio ref="audio" :src="songsSrc" style="width:80%" controls="controls" @ended="nextSong()">
               Your browser does not support the audio element.
             </audio>
           </el-main>
         </el-container>
-      </el-aside>
-      <el-main>
-          <el-aside width="150px">
-            <el-button
-              class="el-icon-sort"
-              size="medium"
-              style="margin-top:10px !important;"
-              circle/>
-            <el-button
-              class="el-icon-chat-dot-square"
-              size="medium"
-              circle/>
-          </el-aside>
-      </el-main>
-    </el-container>
   </div>
 </template>
 
@@ -78,19 +59,20 @@ export default{
       if(index==playlist.length)
         index=0;
       window.localStorage.setItem("currentIndex",index);
-      window.localStorage.setItem("currentIndex",playlist[index].songsId);
+      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
+      window.localStorage.setItem("currentSongsName",playlist[index].songsName);
     },
     lastSong()
     {
-      alert(window.localStorage.getItem("currentSongsId"));
-      this.playSong();
+      alert("hhh")
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       let index=window.localStorage.getItem("currentIndex");
       index--;
       if(index==-1)
         index=playlist.length-1;
       window.localStorage.setItem("currentIndex",index);
-      window.localStorage.setItem("currentIndex",playlist[index].songsId);
+      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
+      window.localStorage.setItem("currentSongsName",playlist[index].songsName);
     }
   },
   mounted() {
@@ -110,12 +92,14 @@ export default{
     }
     if(window.localStorage.getItem("currentSongsId")==null){
       window.localStorage.setItem("currentSongsId",'347230');
+      window.localStorage.setItem("currentSongsName",'海阔天空');
     }
     let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
     if(playlist){
       this.$http.get('http://47.101.183.170:3000/song/url?id='+playlist[0].songsId)
         .then(res =>{
           window.localStorage.setItem("currentSongsId",playlist[0].songsId);
+          window.localStorage.setItem("currentSongsName",playlist[0].songsName);
           console.log(res.data.data[0].url);
           this.songsSrc=res.data.data[0].url;
         })

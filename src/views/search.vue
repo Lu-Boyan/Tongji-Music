@@ -30,6 +30,9 @@
         <el-button icon="el-icon-search" @click="handleSearch" style="margin-top:10px;margin-left:120px !important;" circle></el-button>
         </el-row>
             <el-table
+              v-loading="loading"
+              element-loading-text="拼命加载中"
+              element-loading-spinner="el-icon-loading"
             :data="searchTableData"
             height="380"
             style="width: 100%">
@@ -81,18 +84,13 @@
     data() {
       return {
         songsDatas: [],
-        searchTableData: [{
-          songsName: '稻香',
-          songsArtistsName: '周杰伦',
-          songsTime: '06:66',
-          songsId:'6',
-          songsImage:'null'
-        }],
+        searchTableData: [],
         options:[],
         value:'',
         state: '',
         dialogFormVisible: false,
         selectIndex:'',
+        loading:false
       }
     },
     methods: {
@@ -131,6 +129,7 @@
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
         if(ii==0){//添加到currentIndex指的位置
+          alert("this");
           playlist.unshift(this.searchTableData[index]);
         }
         else{
@@ -177,6 +176,7 @@
         this.dialogFormVisible=true;
       },
       handleSearch() {
+        this.loading=true;
         this.$http.get('http://47.101.183.170:3000/search?keywords='+this.state)
           .then(res =>{
             //清空表格
@@ -201,6 +201,7 @@
           .catch(err => {
             console.log(err);
           })
+        this.loading=false;
       },
       addSongsToList(){
         this.dialogFormVisible = false;

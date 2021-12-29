@@ -1,6 +1,10 @@
 <template>
   <div class="playlist">
+    <row><label style="color: darkblue;padding-left: 45%;font-size: larger">{{this.songsListName}}</label></row>
     <el-table
+      v-loading="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
       :data="songsTableData"
       height="430"
       style="width: 100%; margin-top:10px !important;" >
@@ -56,7 +60,9 @@ export default {
   data() {
     return {
       songsTableData: [],
-      selectedSongslistId:0
+      selectedSongslistId:0,
+      loading:true,
+      songsListName:''
     }
   },
   methods: {
@@ -83,10 +89,14 @@ export default {
       });
     },
     deleteMusic(index) {
+      alert("hh")
       if(window.localStorage.getItem("modifiable")=='1'){
-      this.$http.delete('http://localhost:8082/api/songs/delete?'
-        +'songslistId='+this.selectedSongslistId
-        +'songsId'+rows[index].songsId)
+      this.$http.delete('http://localhost:8082/api/songs/delete',{
+        data:{
+          'songsListId':this.selectedSongslistId,
+          'songsId':this.songsTableData[index].songsId
+        }
+      })
         .then(res =>{
           console.log(res);
           if(res.data=="删除成功"){
@@ -113,9 +123,10 @@ export default {
       }
     },
     playthis(index){
-      console.log(window.localStorage.getItem('currentSongsId'));
+
       window.localStorage.setItem('currentSongsId',this.songsTableData[index].songsId);//播放这首歌
-      console.log(window.localStorage.getItem('currentSongsId'));
+      window.localStorage.setItem('currentSongsName',this.songsTableData[index].songsName);//播放这首歌
+
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       let ii=window.localStorage.getItem('currentIndex');
       if(ii==0){//添加到currentIndex指的位置
@@ -138,6 +149,7 @@ export default {
   },
   mounted:function () {//自动触发写入的函数
     this.selectedSongslistId=window.localStorage.getItem("selectedSongslistId");
+    this.songsListName=window.localStorage.getItem("selectedSongslistName");
     this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+this.selectedSongslistId)
       .then(res =>{
         console.log(res.data);
@@ -151,6 +163,7 @@ export default {
       .catch(err => {
         console.log(err);
       })
+      this.loading=false;
   }
 }
 </script>

@@ -4,6 +4,9 @@
   <el-collapse-item title="    我创建的歌单" name="1" style="color:white;width: 100%; background-color:unset;!important"
                     class="collapse_item">
   <el-table
+    v-loading="loading1"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
     :data="this.createListTableData"
     style="width: 100%; background-color:unset;"
     resizable=“false”>
@@ -15,7 +18,9 @@
       align= "center"
       resizable=“false”
       style="color:#DDDD22 !important">
-
+      <template slot-scope="scope">
+        <div @click="view(scope.$index,createListTableData)">{{ scope.row.songsListName }}</div>
+      </template>
     </el-table-column>
     <el-table-column
       label=""
@@ -32,17 +37,25 @@
           class="el-icon-caret-right"
           size="large"
           circle/>
-        <el-button
-          @click.native.prevent="deleteRow(scope.$index, createListTableData)"
-          class="el-icon-close"
-          size="large"
-          circle/>
+        <el-popconfirm
+          title="确定删除该歌单吗？"
+          @confirm="deleteRow(scope.$index,createListTableData)"
+        >
+          <el-button
+            slot="reference"
+            class="el-icon-close"
+            size="large"
+            circle/>
+        </el-popconfirm>
       </template>
     </el-table-column>
   </el-table>
   </el-collapse-item>
     <el-collapse-item title="我收藏的歌单" name="2">
       <el-table
+        v-loading="loading2"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
         :data="colloctListTableData"
         style="width: 100%; background-color:unset;"
         resizable=“false”>
@@ -54,7 +67,9 @@
           align= "center"
           resizable=“false”
           style="color:#DDDD22 !important">
-
+          <template slot-scope="scope">
+            <div @click="view(scope.$index,colloctListTableData)">{{ scope.row.songsListName }}</div>
+          </template>
         </el-table-column>
         <el-table-column
           label=""
@@ -68,11 +83,16 @@
               class="el-icon-caret-right"
               size="large"
               circle/>
-            <el-button
-              @click.native.prevent="deleteRow(scope.$index,colloctListTableData)"
-              class="el-icon-close"
-              size="large"
-              circle/>
+            <el-popconfirm
+              @confirm="deleteRow(scope.$index,colloctListTableData)"
+              title="确定删除该歌单吗？"
+            >
+              <el-button
+                slot="reference"
+                class="el-icon-close"
+                size="large"
+                circle/>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -90,7 +110,9 @@
         createListTableData: [],
         colloctListTableData: [],
         activeNames:['1','2'],
-        show:true
+        show:true,
+        loading1:true,
+        loading2:true
       }
     },
     methods: {
@@ -99,9 +121,11 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(({ value }) => {
-          this.$http.get('http://localhost:8082/api/songs/add?userId='
-            +JSON.parse(window.localStorage.getItem("userToken")).userId
-            +'&songslistName='+value)
+          this.$http.post('http://localhost:8082/api/songslist/add',{
+            'creatorId': JSON.parse(window.localStorage.getItem("userToken")).userId,
+            'songsListName':value,
+            'songsListId':''
+          })
             .then(res =>{
               this.$message({
                 type: 'success',
@@ -163,7 +187,8 @@
           })
       },
       deleteRow(index,rows) {
-        this.$http.get('http://localhost:8082/api/songslist/delete?'+rows[index].songslistId)
+        alert("aha")
+        this.$http.delete('http://localhost:8082/api/songslist/delete/'+rows[index].songsListId)
           .then(res =>{
             console.log(res);
             if(res.data=="删除成功"){
@@ -183,12 +208,13 @@
         console.log(val);
       },
       view(index,rows) {
-        if (rows[index].data()!= "") {
-          if(rows==this.createListTableData)
+        if (rows[index]!= "") {
+          if(rows[index].songsListId==this.createListTableData[index].songsListId)
             window.localStorage.setItem("modifiable",'1');
           else
             window.localStorage.setItem("modifiable",'0');
-          window.localStorage.setItem("selectSongslistId",rows[index].songslistId);
+          window.localStorage.setItem("selectedSongslistName",rows[index].songsListName);
+          window.localStorage.setItem("selectedSongslistId",rows[index].songsListId);
           this.$router.push('/tjmusic/mainPage/songslist');
         }
       },
@@ -216,6 +242,7 @@
         .catch(err => {
           console.log(err);
         });
+      this.loading1=false;
       this.$http.get('http://localhost:8082/api/listcollect/get/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
         .then(res =>{//获取收藏的歌单
           console.log(res.data);
@@ -232,6 +259,7 @@
         .catch(err => {
           console.log(err);
         })
+      this.loading2=false;
     }
   }
 </script>

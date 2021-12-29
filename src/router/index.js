@@ -12,6 +12,8 @@ import main from '../views/main.vue'
 import community from '../views/community.vue'
 import modify from '../components/modifyme.vue'
 import other from '../components/other.vue'
+import songslist from "../views/songslist";
+import comment from "../views/comment";
 Vue.use(Router)
 
 
@@ -44,6 +46,14 @@ export default new Router({
                             }
                         },
                         {
+                            path: '/tjmusic/mainPage/songslist', // 歌单列表
+                            //component: () => import('../views/playlist.vue'),
+                            component: songslist,
+                            meta: {
+                              keepAlive: true
+                            }
+                        },
+                        {
                             path: '/tjmusic/mainPage/search', // 搜索列表
                             //component: () => import('../views/search.vue'),
                             component: search,
@@ -52,13 +62,21 @@ export default new Router({
                             }
                         },
                         {
-                            path: '/tjmusic/mainPage/recommend', // 搜索列表
+                            path: '/tjmusic/mainPage/recommend', //推荐列表
                             //component: () => import('../views/recommend.vue'),
                             component: recommend,
                             meta: {
                                 keepAlive: true
                             }
-                        }
+                        },
+                        {
+                          path: '/tjmusic/mainPage/comment', //评论列表
+                          //component: () => import('../views/recommend.vue'),
+                          component: comment,
+                          meta: {
+                            keepAlive: true
+                          }
+                        },
                     ]
                 },
                 {
