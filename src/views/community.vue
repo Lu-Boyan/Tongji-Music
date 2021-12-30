@@ -17,7 +17,7 @@
         </table>
 
       </div>
-
+      
       <hr color="red" style="margin-top:-10px;">
 
         <el-timeline style="margin-top:30px; margin-left:-35px">
@@ -34,9 +34,13 @@
                   </table>
                   <table>
                     <p style="margin-top:10px">{{ activity.momentContent }}</p>
-
+                    
                 </table>
-                <el-button type="text"  @click="del(activity.momentId)" style="margin-bottom:0px; float:right">删除</el-button>
+                <el-card v-if="themusicactivities[index] != 0"> 
+                  <h4 style="margin-top:-5px;">歌曲分享</h4>
+                    <p>分享一首好听的歌曲~ 是  {{themusicactivities[index].songsArtistsName}} 的 {{themusicactivities[index].songsName}} </p>
+                  </el-card>
+                <el-button type="text"  @click="del(activity.momentId,activity.userId)" style="margin-bottom:0px; float:right">删除</el-button>
                 <!-- <el-button type="primary" @click="gettheCommunity()">搜索</el-button> -->
               </el-card>
           </el-timeline-item>
@@ -52,7 +56,7 @@
     <el-form ref="form" :model="form" label-width="120px">
         <el-form-item style="margin-left:-120px; width:100%">
           <el-input v-model="form.momentContent" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
-        </el-form-item>
+        </el-form-item>    
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -147,13 +151,20 @@ import axios from 'axios'
     data() {
       return {
         songsDatas: [],
-        searchTableData: [],
+        searchTableData: [{
+          songsName: '稻香',
+          songsArtistsName: '周杰伦',
+          songsTime: '06:66',
+          songsId:'6',
+          songsImage:'null'
+        }],
         options:[],
         value:'',
         songsid:null,
         selectIndex:'',
         dialogFormVisible: false,
         dialogVisible:false,
+        themusicactivities:[],
         theactivities:[],
         form: {
           userId:0,
@@ -185,14 +196,14 @@ import axios from 'axios'
       // this.loadTable();目前这句没有屁用
       this.gettheCommunity();
       var test=localStorage.getItem('userToken')
-      test=JSON.parse(test)
+      test=JSON.parse(test)  
       this.form.userId=test.userId;
       console.log(this.form.userId);
           },
     methods: {
       onSubmit() {
         console.log('submit!')
-        alert("分享成功");
+        alert("分享成功"); 
         this.dialogFormVisible=false;
         this.posttheCommunity();
       },
@@ -229,7 +240,7 @@ import axios from 'axios'
         this.songsid=window.localStorage.getItem('currentSongsId')
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
-        alert("选中成功");
+        alert("选中成功"); 
         this.dialogVisible=false;
         if(ii==0){//添加到currentIndex指的位置
           playlist.unshift(this.searchTableData[index]);
@@ -251,7 +262,7 @@ import axios from 'axios'
           .catch(err => {
             console.log(err);
           })
-        // alert("选中成功");
+        // alert("选中成功"); 
         // this.dialogVisible=false;
       },
       addNextPlay(index){
@@ -322,22 +333,63 @@ import axios from 'axios'
           })
           .catch(err => {
             console.log(err);
+          });
+        this.$http.post('http://localhost:8082/api/songs/add', {
+          "songsListId":this.value,
+          "songsId":this.searchTableData[index].songsId
+        })
+          .then(res =>{
+            //清空表格
+            this.$alert('该歌曲成功添加至歌单！', '消息通知', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$message({
+                  type: 'info',
+                  message: `action: ${ action }`
+                });
+              }
+            });
+          })
+          .catch(err => {
+            console.log(err);
+            this.$alert('由于某种未知原因，歌曲添加至歌单失败！', '消息通知', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.$message({
+                  type: 'info',
+                  message: `action: ${ action }`
+                });
+              }
+            });
           })
       },
-      change(e){
-        this.$forceUpdate();
-        this.search=e;
-        console.log(this.search)
-      },
-      del(themomentId){
-        axios.delete('http://localhost:8082/api/community/delete_community',{
-          data:{
-            momentId:themomentId
-            }
-          })
-        this.gettheCommunity();
-        },
+    
 
+    mounted() {
+      this.loadAll();
+      let table=JSON.parse(window.localStorage.getItem("mySongslist"));
+      for(let i=0;i<table.length;i++){
+        this.options.push(table[i]);
+      }
+    },
+      
+      del(themomentId,userId){
+        console.log(this.form.userId)
+        console.log(themomentId)
+        if(this.form.userId === userId)
+        {
+          axios.delete('http://localhost:8082/api/community/delete_community',{
+            data:{
+              momentId:themomentId
+              }
+            })
+          this.gettheCommunity();
+          alert("删除成功")
+        }
+        else{
+          alert("无权删除该动态")
+        }
+      },
       posttheCommunity(){
         var time=new Date().toLocaleString('chinese',{hour12:false});
         this.form.momentTime = time.toLocaleString( ); //获取日期与时间
@@ -365,15 +417,28 @@ import axios from 'axios'
             const { data: res2 } =await this.$http.get('http://localhost:8082/api/user/get_user/'+this.activities[this.i].userId,)
             this.theactivities. push. apply ( this.theactivities , [res2] ) ;
           }
-
+          for(this.i=0;this.i<this.activities.length;this.i++)
+          {
+            // res3=0;
+            if(this.activities[this.i].songsId != null){
+            const { data: res3 } =await this.$http.get('http://localhost:8082/api/music/get_music_by_songsId/'+this.activities[this.i].songsId,)
+           console.log(res3)
+            this.themusicactivities. push. apply ( this.themusicactivities , [res3] ) ;}
+            else{
+            this.themusicactivities. push. apply ( this.themusicactivities , [0] ) 
+            }
+            // 置零填充空位？可以把结构也搞出来，就判定id是否为0
+            // 记录当前的commentid
+            //页面显示可以用v-if、v-show控制是否隐藏
+          }
         console.log(this.activities);
         console.log(this.theactivities);
+        console.log(this.themusicactivities);
         },
 
 
-
-      },
-
-
+    }
+  
 }
 </script>
+
