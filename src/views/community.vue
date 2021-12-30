@@ -17,7 +17,7 @@
         </table>
 
       </div>
-
+      
       <hr color="red" style="margin-top:-10px;">
 
         <el-timeline style="margin-top:30px; margin-left:-35px">
@@ -29,17 +29,29 @@
                 <table>
                   <tr>
                       <td><img src="../assets/logo.png"  style="width:40px; height:40px"></td>
-                      <td><h4 style="margin-top:10px; margin-left:10px" @click="view(theactivities[index].userId)">{{theactivities[index].userName}}</h4></td>
+                      <td><h3 style="margin-top:10px; margin-left:10px">{{theactivities[index].userName}}</h3></td>
                   </tr>
                   </table>
                   <table>
                     <p style="margin-top:10px">{{ activity.momentContent }}</p>
-
+                    
                 </table>
-                <el-card v-if="themusicactivities[index] != 0">
-                  <h4 style="margin-top:-5px;">歌曲分享</h4>
-                    <p>分享一首好听的歌曲~ 是  {{themusicactivities[index].songsArtistsName}} 的 {{themusicactivities[index].songsName}} </p>
+                <el-card v-if="themusicactivities[index] != 0" class="box-card">  
+                    <table>
+                      <tr>
+                          <td v-if="activity.momentId %5 == 0"><img src="../assets/girl2.jpg"  style="height:100px"></td>
+                          <td v-if="activity.momentId %5 == 1"><img src="../assets/house2.jpg"  style="height:100px"></td>
+                          <td v-if="activity.momentId %5 == 2"><img src="../assets/landscape2.jpg"  style="height:100px"></td>
+                          <td v-if="activity.momentId %5 == 3"><img src="../assets/snow2.jpg"  style="height:100px"></td>
+                          <td v-if="activity.momentId %5 == 4"><img src="../assets/thesea2.jpg"  style="height:100px"></td>
+                          <td>
+                            <h3 style="margin-top:-30px;margin-left:10px">歌曲分享</h3>
+                            <p style="margin-top:20px;margin-left:15px">分享一首好听的歌曲~ 是 <em>{{themusicactivities[index].songsArtistsName}}</em> 的 <strong>{{themusicactivities[index].songsName}}</strong> </p>
+                            </td>
+                      </tr>
+                    </table>
                   </el-card>
+                    
                 <el-button type="text"  @click="del(activity.momentId,activity.userId)" style="margin-bottom:0px; float:right">删除</el-button>
                 <!-- <el-button type="primary" @click="gettheCommunity()">搜索</el-button> -->
               </el-card>
@@ -56,7 +68,7 @@
     <el-form ref="form" :model="form" label-width="120px">
         <el-form-item style="margin-left:-120px; width:100%">
           <el-input v-model="form.momentContent" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
-        </el-form-item>
+        </el-form-item>    
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -129,6 +141,12 @@
 </div>
 </template>
 
+<style>
+.box-card {
+  background:#fffaf4
+}
+</style>
+
 
 
 
@@ -192,25 +210,18 @@ import axios from 'axios'
         ],
       }
     },
-
     created() {
       // this.loadTable();目前这句没有屁用
       this.gettheCommunity();
       var test=localStorage.getItem('userToken')
-      test=JSON.parse(test)
+      test=JSON.parse(test)  
       this.form.userId=test.userId;
       console.log(this.form.userId);
           },
     methods: {
-      view(userId){
-        if(userId!=JSON.parse(window.localStorage.getItem("userToken")).userId)
-          this.$router.push("/tjmusic/personal/other/"+userId);
-        else
-          this.$router.push("/tjmusic/personal/me");
-      },
       onSubmit() {
         console.log('submit!')
-        alert("分享成功");
+        alert("分享成功"); 
         this.dialogFormVisible=false;
         this.posttheCommunity();
       },
@@ -226,7 +237,7 @@ import axios from 'axios'
         };
       },
       loadAll() {
-        this.$http.get('http://localhost:8082/music/getAllMusic')
+        this.$http.get('http://localhost:8082/api/music/getAllMusic')
           .then(res =>{
             console.log(res);
             this.songsDatas.splice(0,this.songsDatas.length);
@@ -247,7 +258,7 @@ import axios from 'axios'
         this.songsid=window.localStorage.getItem('currentSongsId')
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
-        alert("选中成功");
+        alert("选中成功"); 
         this.dialogVisible=false;
         if(ii==0){//添加到currentIndex指的位置
           playlist.unshift(this.searchTableData[index]);
@@ -256,7 +267,7 @@ import axios from 'axios'
           playlist.splice(ii,0,this.searchTableData[index]);
         }
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
           "songsId": this.searchTableData[index].songsId,
           "songsName": this.searchTableData[index].songsName,
           "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -269,7 +280,7 @@ import axios from 'axios'
           .catch(err => {
             console.log(err);
           })
-        // alert("选中成功");
+        // alert("选中成功"); 
         // this.dialogVisible=false;
       },
       addNextPlay(index){
@@ -279,7 +290,7 @@ import axios from 'axios'
         playlist.splice(ii+1,0,this.searchTableData[index]);
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
         console.log(playlist);
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
           "songsId": this.searchTableData[index].songsId,
           "songsName": this.searchTableData[index].songsName,
           "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -328,7 +339,7 @@ import axios from 'axios'
         let index=this.selectIndex;
         console.log(this.searchTableData[index]);
 
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
             "songsId": this.searchTableData[index].songsId,
             "songsName": this.searchTableData[index].songsName,
             "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -341,7 +352,7 @@ import axios from 'axios'
           .catch(err => {
             console.log(err);
           });
-        this.$http.post('http://localhost:8082/songs/add', {
+        this.$http.post('http://localhost:8082/api/songs/add', {
           "songsListId":this.value,
           "songsId":this.searchTableData[index].songsId
         })
@@ -370,7 +381,7 @@ import axios from 'axios'
             });
           })
       },
-
+    
 
     mounted() {
       this.loadAll();
@@ -379,19 +390,20 @@ import axios from 'axios'
         this.options.push(table[i]);
       }
     },
-
+      
       del(themomentId,userId){
         console.log(this.form.userId)
         console.log(themomentId)
         if(this.form.userId === userId)
         {
-          axios.delete('http://localhost:8082/community/delete_community',{
+          axios.delete('http://localhost:8082/api/community/delete_community',{
             data:{
               momentId:themomentId
               }
             })
           this.gettheCommunity();
           alert("删除成功")
+          window.location.reload();
         }
         else{
           alert("无权删除该动态")
@@ -407,32 +419,49 @@ import axios from 'axios'
             userId:this.form.userId,
             songsId:this.songsid,
         }
-        axios.post('http://localhost:8082/community/post_community/',data)
+        axios.post('http://localhost:8082/api/community/post_community/',data)
         .then((res)=>{
             console.log(res);   //  处理成功的函数 相当于success
+            window.location.reload();
         })
         .catch((error)=>{
             console.log(error)  //  错误处理 相当于error
         })
       },
+      compare(propertyName) {
+          console.log(propertyName)
+          return function(object1, object2) {
+              var value1 = object1[propertyName];
+              var value2 = object2[propertyName];
+              if(value2 < value1) {
+                  return -1;
+              } else if(value2 > value1) {
+                  return 1;
+              } else {
+                  return 0;
+              }
+            }
+          },
       async gettheCommunity () {
-        const { data: res1 } =await this.$http.get('http://localhost:8082/community/getall',)
+        const { data: res1 } =await this.$http.get('http://localhost:8082/api/community/getall',)
+
+        res1.sort(this.compare("momentId"));
         this.activities=res1;
         console.log(this.activities);
           for(this.i=0;this.i<this.activities.length;this.i++)
           {
-            const { data: res2 } =await this.$http.get('http://localhost:8082/user/get_user/'+this.activities[this.i].userId,)
+            const { data: res2 } =await this.$http.get('http://localhost:8082/api/user/get_user/'+this.activities[this.i].userId,)
             this.theactivities. push. apply ( this.theactivities , [res2] ) ;
           }
           for(this.i=0;this.i<this.activities.length;this.i++)
           {
             // res3=0;
             if(this.activities[this.i].songsId != null){
-            const { data: res3 } =await this.$http.get('http://localhost:8082/music/get_music_by_songsId/'+this.activities[this.i].songsId,)
+            const { data: res3 } =await this.$http.get('http://localhost:8082/api/music/get_music_by_songsId/'+this.activities[this.i].songsId,)
            console.log(res3)
             this.themusicactivities. push. apply ( this.themusicactivities , [res3] ) ;}
             else{
-            this.themusicactivities. push. apply ( this.themusicactivities , [0] )
+            this.themusicactivities. push. apply ( this.themusicactivities , [0] ) 
             }
             // 置零填充空位？可以把结构也搞出来，就判定id是否为0
             // 记录当前的commentid
@@ -442,10 +471,10 @@ import axios from 'axios'
         console.log(this.theactivities);
         console.log(this.themusicactivities);
         },
-
+      
 
     }
-
+  
 }
 </script>
 
