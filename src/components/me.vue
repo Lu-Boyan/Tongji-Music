@@ -1,22 +1,22 @@
 <template>
 
   <div class="common-layout">
-   
+
 
     <el-container>
       <el-aside ><img src='../assets/logo.png' width="200" height="200"></el-aside>
-      
+
       <el-main>
-      
+
       <el-row style="height:40px">
         <el-col :span="12" ><h2 id="username" >{{this.name}}</h2></el-col>
         <el-col :span="12">
           <!-- <el-button @click="change()" style="width:200px;height:40px">编辑个人资料</el-button> -->
           <router-link to="/tjmusic/personal/me/modify">编辑个人资料</router-link>
           </el-col>
-        
+
       </el-row>
-      
+
         <el-row style="height:140px">
           <el-col :span="3">
             <el-row style="height:40px"><h1>85</h1></el-row>
@@ -26,7 +26,7 @@
            <el-row >
              <!-- /tjmusic/personal/like -->
              <!-- <router-link :to="{path:'/tjmusic/personal/like',params: {id:this.id}}">关注</router-link> -->
-             <router-link :to="'/tjmusic/personal/like/'+this.id">关注</router-link> 
+             <router-link :to="'/tjmusic/personal/like/'+this.id">关注</router-link>
              </el-row></el-col>
          <el-col :span="3"><el-row style="height:40px"><h1>{{this.focus.length}}</h1></el-row>
              <el-row>
@@ -37,31 +37,31 @@
 
 
         <br>
-        <el-row id="info"> 
+        <el-row id="info">
          个人介绍：{{this.content}}
-          
+
         </el-row>
         <el-row id="info">
-           
+
           所在地区：{{this.area}}
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           年龄：{{this.age}}
         </el-row>
-       
-       
+
+
       </el-main>
     </el-container>
 
 
-    
+
     <el-container>
       <el-header>我创建的歌单（{{this.songslist.length}}）</el-header>
       <el-main>
 
-       <va-card 
+       <va-card
             v-for="(songslis, index) in this.songslist"
             :key="index"
-            color="#b5c4b1" 
+            color="#b5c4b1"
             gradient
             style="margin-bottom: 10px"
             >
@@ -73,15 +73,15 @@
                 <router-link :to="'/tjmusic/personal/lists/'+songslis.songsListId">{{listname[index]}}</router-link>
             </el-row>
             </div></el-col>
-                
+
 
               </va-card-content>
-              
+
             </va-card>
-         
+
       </el-main>
     </el-container>
-   
+
   <!-- </div>
   </div> -->
 </div>
@@ -111,7 +111,7 @@ export default {
     //用上面的替换下面这一行（other里141行+方法里）
     //this.id=1window.localStorage
     this.id =localStorage.getItem("userId")
-    fetch("http://localhost:8082/api/v1/user/get_user/" + this.id, {
+    fetch("http://localhost:8082/api/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -135,7 +135,7 @@ export default {
         {
           this.fans.push(res[i].fansId)
         }
-        
+
       })
     })
      fetch("http://localhost:8082/api/follow/get_fans/" + this.id, {
@@ -167,12 +167,12 @@ export default {
         console.log(this.listname)
       })
     })
-    
-    
+
+
   },
   methods: {
-    
-    
+
+
   }
 }
 </script>
@@ -187,7 +187,7 @@ export default {
 }
 #info
 {
- 
+
   text-align: left;
   height: 40px;
 }
@@ -216,7 +216,7 @@ export default {
   text-align: center;
   line-height: 10px;
   height: 300px;
-  
+
 }
 
 /* body > .el-container {
@@ -237,7 +237,7 @@ export default {
   /* line-height: 20px; */
 }
 .bg-purple {
-  
+
   text-align: left;
 }
 .bg-purple-light {

@@ -1,9 +1,8 @@
 <template>
-<div class="songwords" style="position:center">
+<div class="songwords" style="position:center;margin-left: 20%">
     <div style="position:center">
         <el-avatar :size="200" src="https://1.s91i.faiusr.com/4/AFsIABAEGAAgurfA9AUos_CfxwEwgA84uAg!800x800.png?_tm=3&v=1586502589462"></el-avatar>
     </div>
-    <div><button @click="get()">播放歌曲</button></div>
     <div class="songname" style="position:center">
         <div style="font-size:30px">{{this.name}}</div>
     </div>
@@ -55,7 +54,7 @@ data()
         // type: Array,
         // default: () => []
         // },
-        //nolyric:0    
+        //nolyric:0
         lyric:[],
     }
 },
@@ -78,23 +77,23 @@ get()
     console.log("20"+this.id)
     this.name=window.localStorage.getItem('currentSongsName');
     //if(songsId){
-    
+
     this.$http.get('http://47.101.183.170:3000/lyric?id='+this.id)
         .then(res =>{
             console.log("666")
             console.log(res)
-            
+
             this.lyric=parseLyric(res.data.lrc.lyric)
             console.log(this.lyric)
-            
+
             console.log(this.lyric[0].time)
-        
+
 
         })
         .catch(err => {
         console.log(err);
         })
-        
+
     },
     startPlay() {
       let that = this;
@@ -110,8 +109,21 @@ get()
       //console.log(that.timer);
     },
 
-            
+
+  },
+  mounted() {
+    const that=this;
+    //监听缓存中指定key的值变化
+    window.addEventListener("setItemEvent",function(e){
+      //e.key : 是值发生变化的key
+      //例如 e.key==="token";
+      //e.newValue : 是可以对应的新值
+      if(e.key==="currentSongsId"){
+        that.get();
+      }
+    })
   }
+
 }
 </script>
 

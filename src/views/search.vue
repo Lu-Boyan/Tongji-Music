@@ -127,9 +127,8 @@
         window.localStorage.setItem('currentSongsId',this.searchTableData[index].songsId);//播放这首歌
         console.log(window.localStorage.getItem('currentSongsId'));
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-        let ii=window.localStorage.getItem('currentIndex');
+        let ii=parseInt(window.localStorage.getItem('currentIndex'));
         if(ii==0){//添加到currentIndex指的位置
-          alert("this");
           playlist.unshift(this.searchTableData[index]);
         }
         else{
@@ -153,7 +152,7 @@
       addNextPlay(index){
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         console.log(playlist);
-        let ii=window.localStorage.getItem('currentIndex');
+        let ii=parseInt(window.localStorage.getItem('currentIndex'));
         playlist.splice(ii+1,0,this.searchTableData[index]);
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
         console.log(playlist);

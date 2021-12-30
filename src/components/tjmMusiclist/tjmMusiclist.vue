@@ -187,21 +187,44 @@
           })
       },
       deleteRow(index,rows) {
-        alert("aha")
-        this.$http.delete('http://localhost:8082/api/songslist/delete/'+rows[index].songsListId)
-          .then(res =>{
-            console.log(res);
-            if(res.data=="删除成功"){
-              rows.splice(index,1);
-              this.successDelete();
+        if(rows==this.createListTableData){
+          this.$http.delete('http://localhost:8082/api/songslist/delete/'+rows[index].songsListId)
+            .then(res =>{
+              console.log(res);
+              if(res.data=="删除成功"){
+                rows.splice(index,1);
+                this.successDelete();
+              }
+              else{
+                this.failDelete();
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        }
+        else{
+          this.$http.delete('http://localhost:8082/api/listcollect/delete',{
+            data:{
+              songsListId:rows[index].songsListId,
+              collectorId:JSON.parse(window.localStorage.getItem("userToken")).userId
             }
-            else{
+          })
+            .then(res =>{
+              console.log(res);
+              if(res.data=="删除成功"){
+                rows.splice(index,1);
+                this.successDelete();
+              }
+              else{
+                this.failDelete();
+              }
+            })
+            .catch(err => {
               this.failDelete();
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          })
+              console.log(err);
+            })
+        }
       },
       handleChange(val) {
         this.activeNames=['1','2'];
@@ -243,7 +266,7 @@
           console.log(err);
         });
       this.loading1=false;
-      this.$http.get('http://localhost:8082/api/listcollect/get/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
+      this.$http.get('http://localhost:8082/api/listcollect/get_listdetail/'+JSON.parse(window.localStorage.getItem("userToken")).userId)
         .then(res =>{//获取收藏的歌单
           console.log(res.data);
           if(window.localStorage.getItem("selectedSongslistId")==null){
@@ -253,7 +276,6 @@
           for(let i = 0;i<res.data.length;i++)
           {
             this.colloctListTableData.push(res.data[i]);//需要修改
-            console.log(this);
           }
         })
         .catch(err => {

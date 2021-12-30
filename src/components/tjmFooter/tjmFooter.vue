@@ -54,7 +54,7 @@ export default{
     nextSong()
     {
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      let index=window.localStorage.getItem("currentIndex");
+      let index=parseInt(window.localStorage.getItem("currentIndex"));
       index++;
       if(index==playlist.length)
         index=0;
@@ -64,18 +64,23 @@ export default{
     },
     lastSong()
     {
-      alert("hhh")
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      let index=window.localStorage.getItem("currentIndex");
+      let index=parseInt(window.localStorage.getItem('currentIndex'));
       index--;
       if(index==-1)
         index=playlist.length-1;
       window.localStorage.setItem("currentIndex",index);
       window.localStorage.setItem("currentSongsId",playlist[index].songsId);
       window.localStorage.setItem("currentSongsName",playlist[index].songsName);
+    },
+    timer:function (){
+      window.localStorage.setItem("currentPaused",this.$refs.audio.paused);
     }
   },
   mounted() {
+    this.$nextTick(function () {
+      setInterval(this.timer, 300);
+    })
     const that=this;
     //监听缓存中指定key的值变化
     window.addEventListener("setItemEvent",function(e){

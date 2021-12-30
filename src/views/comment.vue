@@ -7,13 +7,13 @@
         type="textarea"
         :autosize="{ minRows: 3, maxRows: 6}"
         placeholder="请输入内容"
-        v-model="contentData" circle style="margin-top:10px !important;">
+        v-model="contentData" circle style="margin-top:10px;width: 80% !important;">
       </el-input>
-      <el-button icon="el-icon-upload2" circle style="margin-top:10px !important;" @click.native.prevent="addData()"></el-button>
+      <el-button icon="el-icon-upload2" circle style="margin-left:10px !important;" @click.native.prevent="addData()"></el-button>
     </el-row>
     <el-table
       :data="commentTableData"
-      height="300"
+      height="350"
       style="width: 100%; background-color:unset;"
       resizable=“false”>
       <el-table-column
@@ -106,7 +106,7 @@ export default {
         this.commentTableData[index].like=true;
 
 
-        this.$http.get('http://localhost:8902/comment/add_thumb/'+this.UId+'/'+CId)
+        this.$http.get('http://localhost:8082/api/comment/add_thumb/'+this.UId+'/'+CId)
           .then(res => {
             console.log(res.data);
 
@@ -117,7 +117,7 @@ export default {
         $(obj.target).css("background-color","white")
         this.commentTableData[index].like=false;
         this.commentTableData[index].thumbNum--;
-        this.$http.get('http://localhost:8902/comment/delete_thumb/'+this.UId+'/'+CId)
+        this.$http.get('http://localhost:8082/api/comment/delete_thumb/'+this.UId+'/'+CId)
           .then(res => {
             console.log(res.data);
           })
@@ -143,10 +143,10 @@ export default {
     },
     getData(){
       console.log('@');
-      this.SId = window.localStorage.getItem('curruntSongsId');
+      this.SId = window.localStorage.getItem('currentSongsId');
 
       this.commentTableData.splice(0,this.commentTableData.length)
-      this.$http.get('http://localhost:8902/comment/get_comment_by_songsId/'+this.SId+'/')
+      this.$http.get('http://localhost:8082/api/comment/get_comment_by_songsId/'+this.SId)
         .then(res => {
           console.log(res.data);
           for(var i = 0;i<res.data.length;i++)

@@ -6,7 +6,7 @@
       element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading"
       :data="songsTableData"
-      height="430"
+      height="400px"
       style="width: 100%; margin-top:10px !important;" >
       <el-table-column label="songsId" align="center" prop="songsId" v-if="false" />
       <el-table-column label="songsImage" align="center" prop="songsImage" v-if="false" />
@@ -128,7 +128,7 @@ export default {
       window.localStorage.setItem('currentSongsName',this.songsTableData[index].songsName);//播放这首歌
 
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      let ii=window.localStorage.getItem('currentIndex');
+      let ii=parseInt(window.localStorage.getItem('currentIndex'));
       if(ii==0){//添加到currentIndex指的位置
         playlist.unshift(this.songsTableData[index]);
       }
@@ -139,12 +139,9 @@ export default {
     },
     addNextPlay(index){
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-      let ii=window.localStorage.getItem('currentIndex');
-      if(ii+index!=0){
-        playlist.splice(ii+index,1);//删除这首歌
-        playlist.splice(ii,0,this.songsTableData[index]);
-        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-      }
+      let ii=parseInt(window.localStorage.getItem('currentIndex'));
+      playlist.splice(ii+1,0,this.songsTableData[index]);
+      window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
     },
   },
   mounted:function () {//自动触发写入的函数

@@ -17,8 +17,8 @@
                       {{name}}
                   </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item> <router-link to="/tjmusic/personal">个人信息</router-link></el-dropdown-item>
-          <el-dropdown-item ><router-link to="/login"><label @click="quit" >退出</label></router-link></el-dropdown-item>
+          <el-dropdown-item><router-link to="/tjmusic/personal">个人信息</router-link></el-dropdown-item>
+          <el-dropdown-item @click.native="quit">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
 
@@ -47,12 +47,15 @@ export default{
 
 
       quit() {
-        alert("退出成功！")
-        this.$http.get('http://localhost:8901/user/logout')
+        this.$http.get('http://localhost:8082/api/user/logout')
           .then(res => {
+            this.$message('退出成功');
+            this.$router.push('/login');
             console.log(res)
           })
-        window.location.href="/login"
+          .catch(err => {
+            console.log(err);
+          });
         //this.$router.back(-2)
       },
       showInfo()

@@ -68,28 +68,33 @@
         window.localStorage.setItem('currentSongsId',this.playlistTableData[index].songsId);//播放这首歌
         window.localStorage.setItem("currentSongsName",this.playlistTableData[index].songsName);
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-        let ii=window.localStorage.getItem('currentIndex');
-        playlist.splice(ii+index,1);//删除这首歌
-        if(ii==0){//添加到currentIndex指的位置
+        let ii=parseInt(window.localStorage.getItem('currentIndex'));
+        if(ii==0){
           playlist.unshift(this.playlistTableData[index]);
         }
         else{
-          playlist.splice(ii-1,0,this.playlistTableData[index]);
+          playlist.splice(ii,0,this.playlistTableData[index]);
         }
+        playlist.splice(ii+index+1,1);
+        this.playlistTableData.unshift(this.playlistTableData[index])
+        this.playlistTableData.splice(index+1,1);
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       },
       addNextPlay(index){
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
-        let ii=window.localStorage.getItem('currentIndex');
-        if(ii+index!=0){
-          playlist.splice(ii+index,1);//删除这首歌
-          playlist.splice(ii,0,this.playlistTableData[index]);
-          window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-        }
+        console.log(playlist);
+        let ii=parseInt(window.localStorage.getItem('currentIndex'));
+        playlist.splice(ii+1,0,this.playlistTableData[index]);
+        playlist.splice(ii+index+1,1);
+        this.playlistTableData.splice(1,0,this.playlistTableData[index])
+        this.playlistTableData.splice(index+1,1);
+        window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
+        console.log(playlist);
       },
       remove(index){
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
+        this.playlistTableData.splice(index,1);
         playlist.splice(ii+index,ii+index+1);
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
       }

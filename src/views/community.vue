@@ -17,7 +17,7 @@
         </table>
 
       </div>
-      
+
       <hr color="red" style="margin-top:-10px;">
 
         <el-timeline style="margin-top:30px; margin-left:-35px">
@@ -29,14 +29,14 @@
                 <table>
                   <tr>
                       <td><img src="../assets/logo.png"  style="width:40px; height:40px"></td>
-                      <td><h4 style="margin-top:10px; margin-left:10px">{{theactivities[index].userName}}</h4></td>
+                      <td><h4 style="margin-top:10px; margin-left:10px" @click="view(theactivities[index].userId)">{{theactivities[index].userName}}</h4></td>
                   </tr>
                   </table>
                   <table>
                     <p style="margin-top:10px">{{ activity.momentContent }}</p>
-                    
+
                 </table>
-                <el-card v-if="themusicactivities[index] != 0"> 
+                <el-card v-if="themusicactivities[index] != 0">
                   <h4 style="margin-top:-5px;">歌曲分享</h4>
                     <p>分享一首好听的歌曲~ 是  {{themusicactivities[index].songsArtistsName}} 的 {{themusicactivities[index].songsName}} </p>
                   </el-card>
@@ -56,7 +56,7 @@
     <el-form ref="form" :model="form" label-width="120px">
         <el-form-item style="margin-left:-120px; width:100%">
           <el-input v-model="form.momentContent" type="textarea" rows="5" placeholder="说点什么吧~" ></el-input>
-        </el-form-item>    
+        </el-form-item>
     </el-form>
 
     <div slot="footer" class="dialog-footer">
@@ -192,18 +192,25 @@ import axios from 'axios'
         ],
       }
     },
+
     created() {
       // this.loadTable();目前这句没有屁用
       this.gettheCommunity();
       var test=localStorage.getItem('userToken')
-      test=JSON.parse(test)  
+      test=JSON.parse(test)
       this.form.userId=test.userId;
       console.log(this.form.userId);
           },
     methods: {
+      view(userId){
+        if(userId!=JSON.parse(window.localStorage.getItem("userToken")).userId)
+          this.$router.push("/tjmusic/personal/other/"+userId);
+        else
+          this.$router.push("/tjmusic/personal/me");
+      },
       onSubmit() {
         console.log('submit!')
-        alert("分享成功"); 
+        alert("分享成功");
         this.dialogFormVisible=false;
         this.posttheCommunity();
       },
@@ -240,7 +247,7 @@ import axios from 'axios'
         this.songsid=window.localStorage.getItem('currentSongsId')
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
         let ii=window.localStorage.getItem('currentIndex');
-        alert("选中成功"); 
+        alert("选中成功");
         this.dialogVisible=false;
         if(ii==0){//添加到currentIndex指的位置
           playlist.unshift(this.searchTableData[index]);
@@ -262,7 +269,7 @@ import axios from 'axios'
           .catch(err => {
             console.log(err);
           })
-        // alert("选中成功"); 
+        // alert("选中成功");
         // this.dialogVisible=false;
       },
       addNextPlay(index){
@@ -363,7 +370,7 @@ import axios from 'axios'
             });
           })
       },
-    
+
 
     mounted() {
       this.loadAll();
@@ -372,7 +379,7 @@ import axios from 'axios'
         this.options.push(table[i]);
       }
     },
-      
+
       del(themomentId,userId){
         console.log(this.form.userId)
         console.log(themomentId)
@@ -425,7 +432,7 @@ import axios from 'axios'
            console.log(res3)
             this.themusicactivities. push. apply ( this.themusicactivities , [res3] ) ;}
             else{
-            this.themusicactivities. push. apply ( this.themusicactivities , [0] ) 
+            this.themusicactivities. push. apply ( this.themusicactivities , [0] )
             }
             // 置零填充空位？可以把结构也搞出来，就判定id是否为0
             // 记录当前的commentid
@@ -438,7 +445,7 @@ import axios from 'axios'
 
 
     }
-  
+
 }
 </script>
 
