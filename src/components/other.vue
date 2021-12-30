@@ -73,7 +73,9 @@
             <el-row>
               <!-- <h4 @click="tolist()">{{listname[index]}}</h4> -->
                 <!-- <el-button type="primary" plain round size="medium" @click="tolist()">{{listname[index]}}</el-button> -->
-                <router-link to="/tjmusic/personal/lists">{{listname[index]}}</router-link>
+                <a>{{listname[index]}}</a>
+                <div style="height:20px" />
+                <el-button @click="collect(songslist)">收藏</el-button>
             </el-row>
             </div></el-col>
                 
@@ -91,9 +93,10 @@
 </template>
 
 <script>
-
+import axios from 'axios'
 
 export default {
+
  data () {
     return {
       showAvatar: false,
@@ -116,8 +119,8 @@ export default {
     //this.id = localStorage.getItem("userId")
     //用上面的替换下面这一行
     this.id=this.$route.params.id
-    
-    fetch("http://localhost:8082/api/v1/user/get_user/" + this.id, {
+    console.log(this.id)
+    fetch("http://localhost:8901/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -130,7 +133,7 @@ export default {
         this.content = res.userContent
       })
     })
-    fetch("http://localhost:8082/api/follow/get_focus/" + this.id, {
+    fetch("http://localhost:8904/follow/get_focus/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -149,7 +152,7 @@ export default {
         
       })
     })
-     fetch("http://localhost:8082/api/follow/get_fans/" + this.id, {
+     fetch("http://localhost:8904/follow/get_fans/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -167,7 +170,7 @@ export default {
         console.log(this.focus)
       })
     })
- fetch( "http://localhost:8082/api/songslist/get/" + this.id, {
+ fetch( "http://localhost:8908/songslist/get/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -186,20 +189,59 @@ export default {
     
   },
   methods: {
+    collect(songslist)
+    {
+      console.log(songslist)
+      // var a=localStorage.getItem("userId")
+      // //a=Number(a)
+      // console.log(this.$route.params.id)
+      // songslist.songsListId=String(songslist.songsListId)
+        // let req = {
+        //         songsListId: songslist.songsListId,
+        //         collectorId:localStorage.getItem("userId")
+        //     }
+        //     console.log(req)
+        //     fetch("http://localhost:8907/listcollect/add", {
+        //         method: "POST",
+        //         body: JSON.stringify(req),    
+        //     }).then(response => {
+        //         console.log(response)
+        //         let result = response.json()
+        //         result.then(res => {
+        //         console.log(res)
+        //         if(res.status==200)
+        //           alert("收藏成功")
+        //         else
+        //           alert("您已经收藏了该歌单")                    
+        //         })
+        //     })
+        axios.post('http://localhost:8907/listcollect/add', {
+          songsListId: songslist.songsListId,
+          collectorId:localStorage.getItem("userId")
+        })
+          .then(function (res) {
+            console.log(res)
+            if(res.status==200)
+              alert("收藏成功")
+            else
+              alert("您已经收藏该歌单")
+          })
+          .catch(err => {
+            alert("您已经收藏该歌单")
+          })
+       
+    },
     handleClick4() {
       this.visible4 = true;
     },
     follow()
     {
         let req = {
-            //通过登录获得id
-    //this.id = localStorage.getItem("userId")
-    //用上面的替换下面这一行（other里141行）
                 focusId: 1,
                 fansId:this.id
             }
 
-            fetch("http://localhost:8082/api/follow/add", {
+            fetch("http://localhost:8904/follow/add", {
                 method: "POST",
                 body: JSON.stringify(req),
                
@@ -216,13 +258,14 @@ export default {
                     
                 })
             })
+    
     },
     delete1()
     {
          //通过登录获得id
     //this.id = localStorage.getItem("userId")
     //用上面的替换下面这一行（other里141行）
-fetch( "http://localhost:8082/api/follow/remove?focusId=" + 1+"&fansId="+this.id, {
+fetch( "http://localhost:8904/follow/remove?focusId=" + 1+"&fansId="+this.id, {
       method: "DELETE",
     }).then((res) => {
       var result = res.json()
@@ -236,6 +279,7 @@ fetch( "http://localhost:8082/api/follow/remove?focusId=" + 1+"&fansId="+this.id
     }
   }
 }
+
 </script>
 
 <style scoped>
