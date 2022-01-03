@@ -135,7 +135,7 @@ export default{
           .then(function (res) {
             switch (res.data.token) {
               case "注册成功":
-                alert("注册成功！");
+                alert("注册成功！您的账号为："+res.data.userId);
                 self.form.user_id=res.data.userId;
                 self.login();
                 break;

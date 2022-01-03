@@ -180,6 +180,7 @@
               playlist.push(res.data[i]);
             }
             window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
+            window.localStorage.setItem('currentSongsName',playlist[0].songsName);
             window.localStorage.setItem('currentSongsId',playlist[0].songsId);
           })
           .catch(err => {
@@ -251,10 +252,6 @@
           .then(res =>{//获取创建的歌单
           if(window.localStorage.getItem("selectedSongslistId")==null)
             window.localStorage.setItem("selectedSongslistId",res.data[0].songsListId);
-          let obj={
-            songsListName:'',
-            songsListId:''
-          }
           for(let i = 0;i<res.data.length;i++)
           {
             this.createListTableData.push(res.data[i]);//需要修改

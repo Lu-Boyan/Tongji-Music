@@ -124,6 +124,7 @@
       },
       playthis(index){
         console.log(window.localStorage.getItem('currentSongsId'));
+        window.localStorage.setItem('currentSongsName',this.searchTableData[index].songsName);
         window.localStorage.setItem('currentSongsId',this.searchTableData[index].songsId);//播放这首歌
         console.log(window.localStorage.getItem('currentSongsId'));
         let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));

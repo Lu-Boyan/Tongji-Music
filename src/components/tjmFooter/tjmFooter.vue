@@ -59,8 +59,8 @@ export default{
       if(index==playlist.length)
         index=0;
       window.localStorage.setItem("currentIndex",index);
-      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
       window.localStorage.setItem("currentSongsName",playlist[index].songsName);
+      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
     },
     lastSong()
     {
@@ -70,8 +70,8 @@ export default{
       if(index==-1)
         index=playlist.length-1;
       window.localStorage.setItem("currentIndex",index);
-      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
       window.localStorage.setItem("currentSongsName",playlist[index].songsName);
+      window.localStorage.setItem("currentSongsId",playlist[index].songsId);
     },
     timer:function (){
       window.localStorage.setItem("currentPaused",this.$refs.audio.paused);
@@ -96,15 +96,15 @@ export default{
       window.localStorage.setItem("currentIndex",'0');
     }
     if(window.localStorage.getItem("currentSongsId")==null){
-      window.localStorage.setItem("currentSongsId",'347230');
       window.localStorage.setItem("currentSongsName",'海阔天空');
+      window.localStorage.setItem("currentSongsId",'347230');
     }
     let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
     if(playlist){
       this.$http.get('http://47.101.183.170:3000/song/url?id='+playlist[0].songsId)
         .then(res =>{
-          window.localStorage.setItem("currentSongsId",playlist[0].songsId);
           window.localStorage.setItem("currentSongsName",playlist[0].songsName);
+          window.localStorage.setItem("currentSongsId",playlist[0].songsId);
           console.log(res.data.data[0].url);
           this.songsSrc=res.data.data[0].url;
         })

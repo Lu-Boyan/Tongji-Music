@@ -226,7 +226,7 @@ import axios from 'axios'
         };
       },
       loadAll() {
-        this.$http.get('http://localhost:8082/music/getAllMusic')
+        this.$http.get('http://localhost:8082/api/music/getAllMusic')
           .then(res =>{
             console.log(res);
             this.songsDatas.splice(0,this.songsDatas.length);
@@ -256,7 +256,7 @@ import axios from 'axios'
           playlist.splice(ii,0,this.searchTableData[index]);
         }
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
           "songsId": this.searchTableData[index].songsId,
           "songsName": this.searchTableData[index].songsName,
           "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -279,7 +279,7 @@ import axios from 'axios'
         playlist.splice(ii+1,0,this.searchTableData[index]);
         window.localStorage.setItem('currentPlayList',JSON.stringify(playlist));
         console.log(playlist);
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
           "songsId": this.searchTableData[index].songsId,
           "songsName": this.searchTableData[index].songsName,
           "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -328,7 +328,7 @@ import axios from 'axios'
         let index=this.selectIndex;
         console.log(this.searchTableData[index]);
 
-        this.$http.post('http://localhost:8082/music/addMusic',{
+        this.$http.post('http://localhost:8082/api/music/addMusic',{
             "songsId": this.searchTableData[index].songsId,
             "songsName": this.searchTableData[index].songsName,
             "songsArtistsName": this.searchTableData[index].songsArtistsName,
@@ -341,7 +341,7 @@ import axios from 'axios'
           .catch(err => {
             console.log(err);
           });
-        this.$http.post('http://localhost:8082/songs/add', {
+        this.$http.post('http://localhost:8082/api/songs/add', {
           "songsListId":this.value,
           "songsId":this.searchTableData[index].songsId
         })
@@ -354,8 +354,11 @@ import axios from 'axios'
                   type: 'info',
                   message: `action: ${ action }`
                 });
+
               }
             });
+            //document.URL=location.href
+
           })
           .catch(err => {
             console.log(err);
@@ -385,13 +388,14 @@ import axios from 'axios'
         console.log(themomentId)
         if(this.form.userId === userId)
         {
-          axios.delete('http://localhost:8082/community/delete_community',{
+          axios.delete('http://localhost:8082/api/community/delete_community',{
             data:{
               momentId:themomentId
               }
             })
           this.gettheCommunity();
           alert("删除成功")
+          this.$router.go(0)
         }
         else{
           alert("无权删除该动态")
@@ -407,8 +411,9 @@ import axios from 'axios'
             userId:this.form.userId,
             songsId:this.songsid,
         }
-        axios.post('http://localhost:8082/community/post_community/',data)
+        axios.post('http://localhost:8082/api/community/post_community/',data)
         .then((res)=>{
+          this.$router.go(0)
             console.log(res);   //  处理成功的函数 相当于success
         })
         .catch((error)=>{
@@ -416,19 +421,19 @@ import axios from 'axios'
         })
       },
       async gettheCommunity () {
-        const { data: res1 } =await this.$http.get('http://localhost:8082/community/getall',)
+        const { data: res1 } =await this.$http.get('http://localhost:8082/api/community/getall',)
         this.activities=res1;
         console.log(this.activities);
           for(this.i=0;this.i<this.activities.length;this.i++)
           {
-            const { data: res2 } =await this.$http.get('http://localhost:8082/user/get_user/'+this.activities[this.i].userId,)
+            const { data: res2 } =await this.$http.get('http://localhost:8082/api/user/get_user/'+this.activities[this.i].userId,)
             this.theactivities. push. apply ( this.theactivities , [res2] ) ;
           }
           for(this.i=0;this.i<this.activities.length;this.i++)
           {
             // res3=0;
             if(this.activities[this.i].songsId != null){
-            const { data: res3 } =await this.$http.get('http://localhost:8082/music/get_music_by_songsId/'+this.activities[this.i].songsId,)
+            const { data: res3 } =await this.$http.get('http://localhost:8082/api/music/get_music_by_songsId/'+this.activities[this.i].songsId,)
            console.log(res3)
             this.themusicactivities. push. apply ( this.themusicactivities , [res3] ) ;}
             else{

@@ -1,5 +1,5 @@
 <template>
-<div class="songwords" style="position:center;margin-left: 20%">
+<div class="songwords" style="position:center">
     <div style="position:center">
         <el-avatar :size="200" src="https://1.s91i.faiusr.com/4/AFsIABAEGAAgurfA9AUos_CfxwEwgA84uAg!800x800.png?_tm=3&v=1586502589462"></el-avatar>
     </div>
@@ -49,7 +49,7 @@ data()
         default: 0
         },
         play: false,
-        timer: null,
+        timer: [],
         // lyric: {
         // type: Array,
         // default: () => []
@@ -68,12 +68,12 @@ data()
 // },
 
 methods: {
-get()
+get(newId)
 {
-    setInterval(this.startPlay, 4000);
+    // setInterval(this.startPlay, 4000);
     console.log('开始定时器');
     console.log("909")
-    this.id=window.localStorage.getItem('currentSongsId');
+    this.id=newId;
     console.log("20"+this.id)
     this.name=window.localStorage.getItem('currentSongsName');
     //if(songsId){
@@ -82,12 +82,30 @@ get()
         .then(res =>{
             console.log("666")
             console.log(res)
-
+            clearTimeout(this.timer);
             this.lyric=parseLyric(res.data.lrc.lyric)
+            this.lyric.sort(function(a,b){
+              var x = a['time'];
+              var y = b['time'];
+              return ((x<y)?-1:(x>y)?1:0)
+            });
             console.log(this.lyric)
 
+          //setInterval(this.startPlay, 4000);
             console.log(this.lyric[0].time)
-
+            this.i=0;
+            this.lyric[0].time=200
+          this.lyric[1].time=2000
+            for(let j=0;j<this.lyric.length;j++){
+              this.timer[j]=setTimeout(() => {  //创建并执行定时器
+                console.log(this.i);
+                console.log(this.i+" "+(this.lyric[this.i].time*1000));
+                this.lyric.push(this.lyric[0]); //将第一条数据塞到最后一个
+                this.lyric.shift(); //删除第一条数据
+                this.play = false; //暂停播放
+                this.i++;
+              }, this.lyric[j].time*1000+20000);
+            }
 
         })
         .catch(err => {
@@ -95,35 +113,41 @@ get()
         })
 
     },
+    sortKey(array,key){
+      return array.sort(function(a,b){
+        var x = a[key];
+        var y = b[key];
+        return ((x<y)?-1:(x>y)?1:0)
+      })
+    },
     startPlay() {
       let that = this;
       let i=0
       that.play = true; //开始播放
-      that.timer = setTimeout(() => {  //创建并执行定时器
+      this.timer=setTimeout(() => {  //创建并执行定时器
         i++
-        console.log(i)
+        console.log(i+" "+that.lyric[i+1]-that.lyric[i])
         that.lyric.push(that.lyric[0]); //将第一条数据塞到最后一个
         that.lyric.shift(); //删除第一条数据
         that.play = false; //暂停播放
-      }, that.lyric[i+1]-that.lyric[i]);
+      }, that.lyric[i].time);
       //console.log(that.timer);
     },
-
 
   },
   mounted() {
     const that=this;
-    //监听缓存中指定key的值变化
+    this.get(window.localStorage.getItem('currentSongsId'));
     window.addEventListener("setItemEvent",function(e){
       //e.key : 是值发生变化的key
       //例如 e.key==="token";
       //e.newValue : 是可以对应的新值
       if(e.key==="currentSongsId"){
-        that.get();
+        that.get(e.newValue);
       }
     })
-  }
 
+  }
 }
 </script>
 

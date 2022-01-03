@@ -1,23 +1,23 @@
 <template>
 
   <div class="common-layout">
-   
+
 
     <el-container>
       <el-aside ><img src='../assets/logo.png' width="200" height="200"></el-aside>
-      
+
       <el-main>
-      
+
       <el-row style="height:40px">
         <el-col :span="12" ><h2 id="username" >{{this.name}}</h2></el-col>
         <el-col :span="12">
           <el-button v-if="this.on==0" @click="follow()" style="width:200px;height:40px">{{this.foll[this.on]}}</el-button>
-          
+
           <el-button v-if="this.on!=0" @click="delete1()" style="width:200px;height:40px">{{this.foll[this.on]}}</el-button>
           </el-col>
-        
+
       </el-row>
-      
+
         <el-row style="height:140px">
           <el-col :span="3">
             <el-row style="height:40px"><h1>85</h1></el-row>
@@ -27,7 +27,7 @@
            <el-row >
              <!-- /tjmusic/personal/like -->
              <!-- <router-link :to="{path:'/tjmusic/personal/like',params: {id:this.id}}">关注</router-link> -->
-             <router-link :to="'/tjmusic/personal/like/'+this.id">关注</router-link> 
+             <router-link :to="'/tjmusic/personal/like/'+this.id">关注</router-link>
              </el-row></el-col>
          <el-col :span="3"><el-row style="height:40px"><h1>{{this.focus.length}}</h1></el-row>
              <el-row>
@@ -38,31 +38,31 @@
 
 
         <br>
-        <el-row id="info"> 
+        <el-row id="info">
          个人介绍：{{this.content}}
-          
+
         </el-row>
         <el-row id="info">
-           
+
           所在地区：{{this.area}}
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           年龄：{{this.age}}
         </el-row>
-       
-       
+
+
       </el-main>
     </el-container>
 
 
-    
+
     <el-container>
       <el-header>{{this.name}}创建的歌单（{{this.songslist.length}}）</el-header>
       <el-main>
 
-       <va-card 
+       <va-card
             v-for="(songslist, index) in this.songslist"
             :key="index"
-            color="#b5c4b1" 
+            color="#b5c4b1"
             gradient
             style="margin-bottom: 10px"
             >
@@ -78,15 +78,15 @@
                 <el-button @click="collect(songslist)">收藏</el-button>
             </el-row>
             </div></el-col>
-                
+
 
               </va-card-content>
-              
+
             </va-card>
-         
+
       </el-main>
     </el-container>
-   
+
   <!-- </div>
   </div> -->
 </div>
@@ -120,7 +120,7 @@ export default {
     //用上面的替换下面这一行
     this.id=this.$route.params.id
     console.log(this.id)
-    fetch("http://localhost:8901/user/get_user/" + this.id, {
+    fetch("http://localhost:8082/api/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -133,7 +133,7 @@ export default {
         this.content = res.userContent
       })
     })
-    fetch("http://localhost:8904/follow/get_focus/" + this.id, {
+    fetch("http://localhost:8082/api/follow/get_focus/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -146,13 +146,13 @@ export default {
     //this.id = localStorage.getItem("userId")
           this.id =localStorage.getItem("userToken").userId
     //用上面的替换下面这一行
-    
+
           this.fans.push(res[i].fansId)
         }
-        
+
       })
     })
-     fetch("http://localhost:8904/follow/get_fans/" + this.id, {
+     fetch("http://localhost:8082/api/follow/get_fans/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -170,14 +170,14 @@ export default {
         console.log(this.focus)
       })
     })
- fetch( "http://localhost:8908/songslist/get/" + this.id, {
+ fetch( "http://localhost:8082/api/songslist/get/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
         console.log(res)
         this.songslist=res
-        
+
         for(var i in res)
         {
           this.listname.push(res[i].songsListName)
@@ -185,8 +185,8 @@ export default {
         console.log(this.listname)
       })
     })
-    
-    
+
+
   },
   methods: {
     collect(songslist)
@@ -203,7 +203,7 @@ export default {
         //     console.log(req)
         //     fetch("http://localhost:8907/listcollect/add", {
         //         method: "POST",
-        //         body: JSON.stringify(req),    
+        //         body: JSON.stringify(req),
         //     }).then(response => {
         //         console.log(response)
         //         let result = response.json()
@@ -212,10 +212,10 @@ export default {
         //         if(res.status==200)
         //           alert("收藏成功")
         //         else
-        //           alert("您已经收藏了该歌单")                    
+        //           alert("您已经收藏了该歌单")
         //         })
         //     })
-        axios.post('http://localhost:8907/listcollect/add', {
+        axios.post('http://localhost:8082/api/listcollect/add', {
           songsListId: songslist.songsListId,
           collectorId:localStorage.getItem("userId")
         })
@@ -229,7 +229,7 @@ export default {
           .catch(err => {
             alert("您已经收藏该歌单")
           })
-       
+
     },
     handleClick4() {
       this.visible4 = true;
@@ -241,31 +241,31 @@ export default {
                 fansId:this.id
             }
 
-            fetch("http://localhost:8904/follow/add", {
+            fetch("http://localhost:8082/api/follow/add", {
                 method: "POST",
                 body: JSON.stringify(req),
-               
+
             }).then(response => {
                 console.log(response)
                 let result = response.json()
                 result.then(res => {
                 console.log(res)
-                
+
                    alert("关注成功")
                     location.reload(true)
                     this.on=1
-                   
-                    
+
+
                 })
             })
-    
+
     },
     delete1()
     {
          //通过登录获得id
     //this.id = localStorage.getItem("userId")
     //用上面的替换下面这一行（other里141行）
-fetch( "http://localhost:8904/follow/remove?focusId=" + 1+"&fansId="+this.id, {
+fetch( "http://localhost:8082/api/follow/remove?focusId=" + 1+"&fansId="+this.id, {
       method: "DELETE",
     }).then((res) => {
       var result = res.json()
@@ -292,7 +292,7 @@ fetch( "http://localhost:8904/follow/remove?focusId=" + 1+"&fansId="+this.id, {
 }
 #info
 {
- 
+
   text-align: left;
   height: 40px;
 }
@@ -321,7 +321,7 @@ fetch( "http://localhost:8904/follow/remove?focusId=" + 1+"&fansId="+this.id, {
   text-align: center;
   line-height: 10px;
   height: 300px;
-  
+
 }
 
 /* body > .el-container {
@@ -342,7 +342,7 @@ fetch( "http://localhost:8904/follow/remove?focusId=" + 1+"&fansId="+this.id, {
   /* line-height: 20px; */
 }
 .bg-purple {
-  
+
   text-align: left;
 }
 .bg-purple-light {

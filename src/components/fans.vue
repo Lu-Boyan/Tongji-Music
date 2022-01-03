@@ -1,19 +1,19 @@
 
 <template>
     <div class="common-layout">
-   
+
 
     <el-container>
       <el-aside ><img src='../assets/logo.png' width="200" height="200"></el-aside>
-      
+
       <el-main id="me">
-      
+
       <el-row style="height:40px">
         <el-col :span="12" ><h2 id="username" style="height:20px">{{this.name}}</h2></el-col>
-       
-        
+
+
       </el-row>
-      
+
         <el-row style="height:140px;text-align:left">
           <el-col :span="3" >
             <el-row style="height:40px"><h1>85</h1></el-row>
@@ -32,18 +32,18 @@
 
 
         <br>
-        <el-row id="info"> 
+        <el-row id="info">
          个人介绍：{{this.content}}
-          
+
         </el-row>
         <el-row id="info">
-           
+
           所在地区：{{this.area}}
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           年龄：{{this.age}}
         </el-row >
-        
-       
+
+
       </el-main>
     </el-container>
 
@@ -52,18 +52,18 @@
     <el-container id="f">
       <el-header>粉丝列表</el-header>
       <el-main>
-        
-        <el-row>     
+
+        <el-row>
          <el-col  id="fan">
-    <el-container v-for="(focu, index) in this.focus":key="index" id="lis">  
-          
+    <el-container v-for="(focu, index) in this.focus":key="index" id="lis">
+
        <el-aside id="as" width="16%"><img src="../assets/logo.png" height="80" width="80"></el-aside>
       <el-main id="love"  style="height:200px !important;">
-        
+
        <el-row style="text-align: left">
         <el-col :span="12" style="height: 1px"><a id="username" style='color:black;height:1px;text-align: left'>{{fname[index]}}</a></el-col>
         <el-col :span="12" style="height :1px"><button style="width:200px;height:40px"  ><router-link :to="'/tjmusic/personal/other/'+focus" >查看主页</router-link> </button></button></el-col>
-        
+
       </el-row>
       <el-row>
           <el-col :span="3">
@@ -76,18 +76,18 @@
           <el-col :span="3">
             <a><router-link :to="'/tjmusic/personal/fans/'+focus">粉丝</router-link> {{ffans[index]}}</a>
           </el-col>
-        </el-row>  
-       
-      </el-main> 
+        </el-row>
+
+      </el-main>
     </el-container>
 
-    
-    
+
+
          </el-col>
        </el-row>
       </el-main>
     </el-container>
-   
+
   </div>
   <!-- </div>
   </div> -->
@@ -112,13 +112,13 @@ export default {
       ffocus:[],
       ffans:[]
     }
-          
+
     },
     mounted () {
-     
+
     this.id=this.$route.params.id
-  
-    fetch("http://localhost:8082/api/v1/user/get_user/" + this.id, {
+
+    fetch("http://localhost:8082/api/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -131,7 +131,7 @@ export default {
         this.content = res.userContent
       })
     })
-    
+
      fetch("http://localhost:8082/api/follow/get_focus/" + this.id, {
       method: "GET",
     }).then((res) => {
@@ -141,39 +141,39 @@ export default {
       result.then((res) => {
         //console.log("666")
         //console.log(res)
-        
+
         for(var i in res)
         {
           this.fans.push(res[i].fansId)
-          
+
         }
         console.log(this.focus)
       })
     })
-    
+
      fetch("http://localhost:8082/api/follow/get_fans/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
-        
+
         console.log(this.focus)
         for(var i in res)
         {
           //登录的id
           if(res[i].focusId!=1)
-         { 
+         {
            this.focus.push(res[i].focusId)
-          
+
           console.log(res[i].focusId)
-        fetch("http://localhost:8082/api/v1/user/get_user/" + res[i].focusId, {
+        fetch("http://localhost:8082/api/user/get_user/" + res[i].focusId, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
         //console.log(res)
         this.fname.push(res.userName)
-        
+
         console.log("woshi"+this.fname)
       })
     })
@@ -182,9 +182,9 @@ fetch("http://localhost:8082/api/follow/get_focus/" + res[i].focusId, {
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
-       
+
         this.ffocus.push(res.length)
-        
+
         //console.log(this.ffocus)
       })
     })
@@ -195,31 +195,31 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
     }).then((res) => {
       var result = res.json()
       result.then((res) => {
-       
+
         //console.log(res)
         this.ffans.push(res.length)
-        
+
         //console.log(this.ffans)
       })
     })
     }
         }
-        
+
       })
     })
     console.log("898")
-    
+
     console.log("nihis"+this.focus[1])
     console.log(this.focus)
     console.log(resdata)
   },
     methods:{
-       
-                
-            
+
+
+
         },
- 
-    
+
+
 }
 </script>
 
@@ -247,13 +247,13 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
 #lis
 {
   height: 100px;
-  
+
 }
 #info
 {
   text-align: left;
   line-height: 10px;
-  
+
 }
 #fan
 {
@@ -277,7 +277,7 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
 }
 #me
 {
-  
+
   color: var(--el-text-color-primary);
   text-align: center;
   line-height: 70px;
@@ -288,7 +288,7 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
 }
 #me>.el-row
 {
- 
+
   margin-bottom: 20px;
   height: 10px;
   text-align: left;
@@ -312,8 +312,8 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
 }
 .el-aside {
   /* background-color: #d3dce6; */
-  
- 
+
+
   color: var(--el-text-color-primary);
   text-align: left;
   line-height: 100px;
@@ -347,7 +347,7 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
   background: #99a9bf;
 }
 .bg-purple {
-  
+
   text-align: left;
 }
 .bg-purple-light {
@@ -358,5 +358,5 @@ fetch("http://localhost:8082/api/follow/get_fans/" + res[i].focusId, {
   border-radius: 4px;
   min-height: 36px;
 }
-    
+
 </style>

@@ -2,7 +2,7 @@
   <el-card>
        <el-card-content style="text-align: left">
         <h1>修改个人信息</h1>
-          
+
           <div class="course-title" >昵称：<el-input
       class="mb-4"
       v-model="this.name"
@@ -47,18 +47,18 @@ export default {
       age: '',
       area: '',
       content: '',
-      
+
 
         }
-    }, 
+    },
     mounted () {
-        
+
  //通过登录获得id
     //this.id = localStorage.getItem("userId")
     //用上面的替换下面这一行
     //this.id=1
     this.id =localStorage.getItem("userId")
-    fetch("http://localhost:8082/api/v1/user/get_user/" + this.id, {
+    fetch("http://localhost:8082/api/user/get_user/" + this.id, {
       method: "GET",
     }).then((res) => {
       var result = res.json()
@@ -71,7 +71,7 @@ export default {
         this.content = res.userContent
       })
     })
-   
+
     },
   methods: {
      //接口待完成
@@ -79,7 +79,7 @@ export default {
     {
 
     }
-    
+
   }
 }
 </script>

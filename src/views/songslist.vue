@@ -123,9 +123,8 @@ export default {
       }
     },
     playthis(index){
-
+      window.localStorage.setItem('currentSongsName',this.songsTableData[index].songsName);
       window.localStorage.setItem('currentSongsId',this.songsTableData[index].songsId);//播放这首歌
-      window.localStorage.setItem('currentSongsName',this.songsTableData[index].songsName);//播放这首歌
 
       let playlist=JSON.parse(window.localStorage.getItem('currentPlayList'));
       let ii=parseInt(window.localStorage.getItem('currentIndex'));

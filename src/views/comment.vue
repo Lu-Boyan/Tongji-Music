@@ -133,7 +133,7 @@ export default {
       {
 
 
-        this.$http.get('http://localhost:8902/comment/delete_comment_by_Id/'+this.commentTableData[index].commentId)
+        this.$http.get('http://localhost:8082/api/comment/delete_comment_by_Id/'+this.commentTableData[index].commentId)
           .then(res => {
             console.log(res.data);
           })
@@ -157,11 +157,12 @@ export default {
         })
     },
     addData(){
-      var url = 'http://localhost:8902/comment/add_comment/'+this.SId+'/'+this.UId;
+      var url = 'http://localhost:8082/api/comment/add_comment/'+this.SId+'/'+this.UId+'/';
       url = url + this.contentData;
       console.log(url);
       this.$http.get(url)
         .then(res => {
+
         })
 
 

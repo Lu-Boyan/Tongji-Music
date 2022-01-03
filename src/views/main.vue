@@ -55,17 +55,12 @@ export default{
           window.localStorage.setItem("selectedSongslistId",t);
           window.localStorage.setItem("selectedSongslistName",res.data[0].songsListName);
           window.localStorage.setItem('defaultPlaylist',t);
-          this.$http.get('http://localhost:8082/api/songs/get_songs/'+t)
-            .then(res =>{
-              console.log(res.data);
-              window.localStorage.setItem("currentSongsId",res.data[0].songsId);
-            })
-            .catch(err => {
-              console.log(err);
-            });
+
           this.$http.get('http://localhost:8082/api/songs/get_songsdetail/'+t)
             .then(res =>{
               console.log(res);
+              window.localStorage.setItem("currentSongsName",res.data[0].songsName);
+              window.localStorage.setItem("currentSongsId",res.data[0].songsId);
               window.localStorage.setItem('currentIndex','0');
               let table=[];
               for(let i = 0;i<res.data.length;i++)
